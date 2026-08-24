@@ -40,9 +40,7 @@ class FundsPage {
 
     get searchIcon() {
         return this.driver.$(
-            'android=new UiSelector()' +
-            '.className("android.widget.ImageView")' +
-            '.instance(3)'
+            '//android.widget.ImageView[@clickable="true" and @bounds="[930,174][1041,284]"]'
         );
     }
 
@@ -52,18 +50,8 @@ class FundsPage {
 
     get searchField() {
         return this.driver.$(
-            '//android.widget.EditText[@hint="Search Funds..."]'
-        );
-    }
-
-    // =========================================
-    // Search Results
-    // =========================================
-
-    get searchResults() {
-        return this.driver.$$(
-            '//android.widget.ScrollView' +
-            '//android.widget.ImageView[@clickable="true"]'
+            'android=new UiSelector()' +
+            '.className("android.widget.EditText")'
         );
     }
 
@@ -76,6 +64,18 @@ class FundsPage {
             'android=new UiSelector()' +
             '.className("android.widget.ImageView")' +
             '.descriptionContains("Riskometer")'
+        );
+    }
+
+    // =========================================
+    // Search Results
+    // =========================================
+
+    get searchResults() {
+        return this.driver.$$(
+            'android=new UiSelector()' +
+            '.className("android.widget.ImageView")' +
+            '.clickable(true)'
         );
     }
 
@@ -130,13 +130,24 @@ class FundsPage {
 
     async clickSearch() {
 
+        console.log("Looking for Search icon...");
+
         await this.searchIcon.waitForDisplayed({
             timeout: 30000
         });
 
+        console.log("Search icon found.");
+
         await this.searchIcon.click();
 
-        console.log("Search icon clicked");
+        console.log("Search icon clicked.");
+
+        // Wait for Search screen to appear
+        await this.searchField.waitForDisplayed({
+            timeout: 30000
+        });
+
+        console.log("Search field displayed.");
     }
 
     // =========================================
@@ -161,56 +172,105 @@ class FundsPage {
     }
 
     // =========================================
-    // Click First Visible Fund
+    // Click First Matching Fund
     // =========================================
 
-    async clickFirstVisibleFund() {
+    async clickFirstVisibleFund(keyword) {
 
+        console.log("");
+        console.log("=================================");
+        console.log(
+            `SEARCHING FOR FIRST FUND: ${keyword}`
+        );
+        console.log("=================================");
+
+        // Wait until at least one matching fund
+        // is displayed
         await this.driver.waitUntil(
             async () => {
 
-                const results =
-                    await this.searchResults;
+                const imageViews =
+                    await this.driver.$$(
+                        'android=new UiSelector()' +
+                        '.className("android.widget.ImageView")'
+                    );
 
-                return results.length > 0;
+                for (const imageView of imageViews) {
 
+                    const contentDesc =
+                        await imageView.getAttribute(
+                            "content-desc"
+                        );
+
+                    if (
+                        contentDesc &&
+                        contentDesc
+                            .toLowerCase()
+                            .includes(
+                                keyword.toLowerCase()
+                            ) &&
+                        contentDesc.includes("Type -")
+                    ) {
+                        return true;
+                    }
+                }
+
+                return false;
             },
             {
                 timeout: 30000,
                 interval: 1000,
                 timeoutMsg:
-                    "No fund search results were displayed"
+                    `No fund search result found for "${keyword}"`
             }
         );
 
-        const results =
-            await this.searchResults;
-
-        console.log(
-            `Search results found: ${results.length}`
-        );
-
-        const firstFund =
-            results[0];
-
-        const fundData =
-            await firstFund.getAttribute(
-                "content-desc"
+        // Get all ImageView elements
+        const imageViews =
+            await this.driver.$$(
+                'android=new UiSelector()' +
+                '.className("android.widget.ImageView")'
             );
 
-        console.log("");
-        console.log("First visible fund:");
-        console.log(fundData);
+        // Find the first matching fund
+        for (const imageView of imageViews) {
 
-        await firstFund.click();
+            const contentDesc =
+                await imageView.getAttribute(
+                    "content-desc"
+                );
 
-        console.log(
-            "First visible fund clicked"
+            if (
+                contentDesc &&
+                contentDesc
+                    .toLowerCase()
+                    .includes(
+                        keyword.toLowerCase()
+                    ) &&
+                contentDesc.includes("Type -")
+            ) {
+
+                console.log("");
+                console.log("First matching fund:");
+                console.log(contentDesc);
+
+                await imageView.click();
+
+                console.log(
+                    "First matching fund clicked."
+                );
+
+                return;
+            }
+        }
+
+        throw new Error(
+            `No visible fund matched keyword "${keyword}"`
         );
     }
 
     // =========================================
-    // Validate Single Fund Card
+    // Validate Single Fund Data
     // =========================================
 
     validateFundData(fundData, index) {
@@ -222,11 +282,14 @@ class FundsPage {
             );
         }
 
-        console.log(`\nFund Card ${index}:`);
+        console.log(
+            `\nFund Card ${index}:`
+        );
+
         console.log(fundData);
 
         // -----------------------------------------
-        // Validate Riskometer
+        // Riskometer
         // -----------------------------------------
 
         if (!fundData.includes("Riskometer")) {
@@ -237,7 +300,7 @@ class FundsPage {
         }
 
         // -----------------------------------------
-        // Validate Min SIP Amount
+        // Min SIP Amount
         // -----------------------------------------
 
         if (!fundData.includes("Min SIP amount")) {
@@ -248,7 +311,7 @@ class FundsPage {
         }
 
         // -----------------------------------------
-        // Validate 3Y Return
+        // 3Y Return
         // -----------------------------------------
 
         if (!fundData.includes("3Y Return")) {
@@ -259,7 +322,7 @@ class FundsPage {
         }
 
         // -----------------------------------------
-        // Validate SIP Amount
+        // SIP Amount Format
         // -----------------------------------------
 
         const sipPattern =
@@ -273,12 +336,14 @@ class FundsPage {
         }
 
         // -----------------------------------------
-        // Validate 3Y Return
+        // 3Y Return Format
         // -----------------------------------------
 
         const returnPattern =
             /\d+(\.\d+)?%/;
 
+        // Some funds may display "-"
+        // when 3Y Return is unavailable.
         const noReturnAvailable =
             fundData.includes("3Y Return\n-");
 
@@ -374,10 +439,8 @@ class FundsPage {
                 const fundKey =
                     fundData.trim();
 
-                // -----------------------------------------
-                // Skip Already Validated Fund
-                // -----------------------------------------
-
+                // Avoid validating the same card again
+                // after scrolling.
                 if (
                     validatedFunds.has(
                         fundKey
@@ -420,10 +483,6 @@ class FundsPage {
                         percent: 0.80
                     }
                 );
-
-            await this.driver.pause(
-                1000
-            );
 
             scrollCount++;
 

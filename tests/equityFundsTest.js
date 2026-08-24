@@ -29,7 +29,7 @@ async function main() {
         await launchApp(driver);
 
         console.log("=================================");
-        console.log("SEARCH FUND TEST STARTED");
+        console.log("EQUITY FUNDS TEST STARTED");
         console.log("=================================");
 
 
@@ -83,41 +83,23 @@ async function main() {
 
 
         // =========================================
-        // Open Fund Search
+        // Select Equity Funds
         // =========================================
 
         console.log("");
-        console.log("Opening Fund Search...");
+        console.log("Opening Equity Funds...");
 
-        await fundsPage.clickSearch();
-
-
-        // =========================================
-        // Search Fund
-        // =========================================
-
-        console.log("");
-        console.log(
-            `Searching for: ${testData.fundSearchKeyword}`
-        );
-
-        await fundsPage.searchFund(
-            testData.fundSearchKeyword
-        );
+        await fundsPage.selectEquityFunds();
 
 
         // =========================================
-        // Click First Matching Fund
+        // Validate All Equity Fund Cards
         // =========================================
 
         console.log("");
-        console.log(
-            "Clicking first matching fund..."
-        );
+        console.log("Validating Fund Cards...");
 
-        await fundsPage.clickFirstVisibleFund(
-            testData.fundSearchKeyword
-        );
+        await fundsPage.validateAllFundCards();
 
 
         // =========================================
@@ -126,7 +108,7 @@ async function main() {
 
         console.log("");
         console.log("=================================");
-        console.log("SEARCH FUND TEST PASSED");
+        console.log("EQUITY FUNDS TEST PASSED");
         console.log("=================================");
 
     }
@@ -140,7 +122,7 @@ async function main() {
 
         console.error("");
         console.error("=================================");
-        console.error("SEARCH FUND TEST FAILED");
+        console.error("EQUITY FUNDS TEST FAILED");
         console.error("=================================");
 
         console.error(error);

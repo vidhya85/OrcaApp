@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/orcaPOMTest.js"
+    "test": "node tests/equityFundsTest.js"
   },
   "keywords": [],
   "author": "",
