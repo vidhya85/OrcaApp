@@ -1,4 +1,5 @@
 const FundsPage = require("../pages/FundsPage");
+const FundDetailsPage = require("../pages/FundDetailsPage");
 
 const testData = require("../config/testData");
 const PermissionHandler = require("../utils/PermissionHandler");
@@ -42,6 +43,9 @@ async function main() {
 
         const fundsPage =
             new FundsPage(driver);
+
+        const fundDetailsPage =
+            new FundDetailsPage(driver);
 
         const loginFlow =
             new LoginFlow(
@@ -118,6 +122,18 @@ async function main() {
         await fundsPage.clickFirstVisibleFund(
             testData.fundSearchKeyword
         );
+
+
+        // =========================================
+        // Validate Fund Details
+        // =========================================
+
+        console.log("");
+        console.log(
+            "Validating Fund Details..."
+        );
+
+        await fundDetailsPage.validateAllTabs();
 
 
         // =========================================
