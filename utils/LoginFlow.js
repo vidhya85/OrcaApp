@@ -80,7 +80,7 @@ class LoginFlow {
         // Welcome Screen
         // -----------------------------------------
 
-        // Uncomment this if the fresh login
+        // Uncomment this if fresh login
         // starts from the Welcome screen.
 
         // await this.welcomePage.clickLetsEnrich();
@@ -110,6 +110,36 @@ class LoginFlow {
         console.log("Waiting for OTP...");
 
         await this.otpPage.waitForOtpEntry();
+
+
+        // -----------------------------------------
+        // TPIN
+        // -----------------------------------------
+
+        console.log("");
+        console.log("Waiting for TPIN screen...");
+
+        await this.loginPage.waitForTPINScreen();
+
+
+        // -----------------------------------------
+        // Enter TPIN
+        // -----------------------------------------
+
+        console.log("Entering TPIN...");
+
+        await this.loginPage.enterTPIN(
+            this.testData.tpin
+        );
+
+
+        // -----------------------------------------
+        // Secure Login
+        // -----------------------------------------
+
+        console.log("Clicking Secure Login...");
+
+        await this.loginPage.clickSecureLogin();
 
 
         // -----------------------------------------
