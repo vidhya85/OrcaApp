@@ -83,44 +83,67 @@ async function main() {
         await fundsPage.validateAllFundCards();
 
 
-        // =========================================
-        // Fund Details
+                // =========================================
+        // Fund Details - Validate All Visible Funds
         // =========================================
 
         const fundDetailsPage =
             new FundDetailsPage(driver);
 
+        //const visibleFunds =
+        //    await fundsPage.getVisibleFundCards();
 
-        // Open first fund
-        await fundsPage.openFundByIndex(0);
+        const fundCount =(await fundsPage.getVisibleFundCards()).length;
 
-
-        // Validate Overview
-        await fundDetailsPage.validateOverview();
-
-
-        // Validate Nifty Graph
-        await fundDetailsPage.validateNiftyGraph();
+        console.log("");
+        console.log("=================================");
+        console.log(`TOTAL VISIBLE FUNDS: ${fundCount}`);
+        console.log("=================================");
 
 
-        // Open Holdings
-        await fundDetailsPage.clickHoldings();
+        for (let i = 0; i < fundCount; i++) {
+
+            console.log("");
+            console.log("=================================");
+            console.log(`VALIDATING FUND ${i + 1} OF ${fundCount}`);
+            console.log("=================================");
 
 
-        // Validate Holdings
-        await fundDetailsPage.validateHoldings();
+            // Open fund
+            await fundsPage.openFundByIndex(i);
 
 
-        // Open Scheme
-        await fundDetailsPage.clickScheme();
+            // Validate Overview
+            await fundDetailsPage.validateOverview();
 
 
-        // Validate Scheme
-        await fundDetailsPage.validateScheme();
+            // Validate Nifty Graph
+            await fundDetailsPage.validateNiftyGraph();
 
 
-        // Return to Equity Funds
-        await fundsPage.returnToEquityFunds();
+            // Open Holdings
+            await fundDetailsPage.clickHoldings();
+
+
+            // Validate Holdings
+            await fundDetailsPage.validateHoldings();
+
+
+            // Open Scheme
+            await fundDetailsPage.clickScheme();
+
+
+            // Validate Scheme
+            await fundDetailsPage.validateScheme();
+
+
+            // Return to Equity Funds
+            await fundsPage.returnToEquityFunds();
+
+
+            console.log("");
+            console.log(`FUND ${i + 1} VALIDATION PASSED`);
+        }
 
 
         // =========================================

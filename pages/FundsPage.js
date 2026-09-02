@@ -59,7 +59,7 @@ class FundsPage {
     get fundCards() {
         return this.driver.$$(
             'android=new UiSelector()' +
-            '.className("android.view.View")' +
+            '.className("android.widget.ImageView")' +
             '.descriptionContains("Riskometer")' +
             '.clickable(true)'
         );
@@ -128,7 +128,7 @@ class FundsPage {
         await this.driver.pause(2000);
 
         // Verify that fund cards are displayed
-        try {
+       /* try {
             await this.fundCards[0].waitForDisplayed({
                 timeout: 10000
             });
@@ -138,7 +138,7 @@ class FundsPage {
             console.log(
                 "Equity Funds list opened, but fund cards are not currently visible."
             );
-        }
+        }*/
     }
 
     // =========================================================
@@ -194,6 +194,7 @@ class FundsPage {
     // =========================================================
 
     async openFundByIndex(index) {
+
         console.log("");
         console.log(`Opening fund card ${index + 1}...`);
 
@@ -222,9 +223,9 @@ class FundsPage {
 
         await cards[index].click();
 
-        await this.driver.pause(2000);
-
         console.log("Fund card clicked.");
+
+        await this.driver.pause(2000);
     }
 
     // =========================================================

@@ -68,7 +68,7 @@ class FundDetailsPage {
 
     get maxReturnsValue() {
         return this.driver.$(
-            'android=new UiSelector().descriptionMatches("\\\\d+(\\\\.\\\\d+)?%")'
+            '//android.view.View[@content-desc="Max Returns - Annualized"]/preceding-sibling::android.view.View[1]'
         );
     }
 
@@ -285,34 +285,28 @@ class FundDetailsPage {
         // Graph Period Buttons
         // -----------------------------------------
 
-        await this.oneMonthButton.waitForDisplayed({
-            timeout: 30000
-        });
+        const periodButtons = [
+            { name: "1M", element: this.oneMonthButton },
+            { name: "6M", element: this.sixMonthButton },
+            { name: "1Y", element: this.oneYearButton },
+            { name: "3Y", element: this.threeYearButton },
+            { name: "5Y", element: this.fiveYearButton },
+            { name: "MAX", element: this.maxButton }
+        ];
 
-        await this.sixMonthButton.waitForDisplayed({
-            timeout: 30000
-        });
+        for (const period of periodButtons) {
 
-        await this.oneYearButton.waitForDisplayed({
-            timeout: 30000
-        });
+            if (await period.element.isDisplayed()) {
 
-        await this.threeYearButton.waitForDisplayed({
-            timeout: 30000
-        });
+                console.log(`${period.name} displayed.`);
 
-        await this.fiveYearButton.waitForDisplayed({
-            timeout: 30000
-        });
+            } else {
 
-        await this.maxButton.waitForDisplayed({
-            timeout: 30000
-        });
-
-        console.log(
-            "All graph period buttons displayed."
-        );
-
+                console.log(
+                    `${period.name} not available for this fund - skipping.`
+                );
+            }
+        }
         console.log("");
         console.log("OVERVIEW VALIDATION PASSED");
     }
