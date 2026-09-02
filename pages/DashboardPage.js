@@ -4,9 +4,10 @@ class DashboardPage {
         this.driver = driver;
     }
 
-    get mutualFunds() {
+    // Unique Dashboard element
+    get dashboardIdentifier() {
         return this.driver.$(
-            'android=new UiSelector().descriptionContains("Mutual Funds")'
+            'android=new UiSelector().description("Available Balance")'
         );
     }
 
@@ -14,8 +15,8 @@ class DashboardPage {
 
         try {
 
-            await this.mutualFunds.waitForExist({
-                timeout: 15000
+            await this.dashboardIdentifier.waitForDisplayed({
+                timeout: 5000
             });
 
             console.log("Dashboard detected.");

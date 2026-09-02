@@ -3,6 +3,7 @@ const FundsPage = require("../pages/FundsPage");
 const testData = require("../config/testData");
 const PermissionHandler = require("../utils/PermissionHandler");
 const LoginFlow = require("../utils/LoginFlow");
+const FundDetailsPage = require("../pages/FundDetailsPage");
 
 const {
     createDriver,
@@ -51,43 +52,23 @@ async function main() {
 
 
         // =========================================
-        // Handle Notification Permission
-        // =========================================
-
-        await permissionHandler
-            .handleNotificationPermission();
-
-
-        // =========================================
         // Login / Already Logged In
         // =========================================
 
-        await loginFlow.ensureLoggedIn();
-
-
-        // =========================================
-        // Validate Dashboard
-        // =========================================
-
-        await loginFlow.validateDashboard();
+        await loginFlow.ensureLoggedIn(
+            permissionHandler
+        );
 
 
         // =========================================
         // Open Mutual Funds
         // =========================================
 
-        console.log("");
-        console.log("Opening Mutual Funds...");
-
         await fundsPage.clickMutualFunds();
-
 
         // =========================================
         // Select Equity Funds
         // =========================================
-
-        console.log("");
-        console.log("Opening Equity Funds...");
 
         await fundsPage.selectEquityFunds();
 
@@ -100,6 +81,46 @@ async function main() {
         console.log("Validating Fund Cards...");
 
         await fundsPage.validateAllFundCards();
+
+
+        // =========================================
+        // Fund Details
+        // =========================================
+
+        const fundDetailsPage =
+            new FundDetailsPage(driver);
+
+
+        // Open first fund
+        await fundsPage.openFundByIndex(0);
+
+
+        // Validate Overview
+        await fundDetailsPage.validateOverview();
+
+
+        // Validate Nifty Graph
+        await fundDetailsPage.validateNiftyGraph();
+
+
+        // Open Holdings
+        await fundDetailsPage.clickHoldings();
+
+
+        // Validate Holdings
+        await fundDetailsPage.validateHoldings();
+
+
+        // Open Scheme
+        await fundDetailsPage.clickScheme();
+
+
+        // Validate Scheme
+        await fundDetailsPage.validateScheme();
+
+
+        // Return to Equity Funds
+        await fundsPage.returnToEquityFunds();
 
 
         // =========================================

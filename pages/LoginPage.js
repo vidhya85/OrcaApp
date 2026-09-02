@@ -33,10 +33,6 @@ class LoginPage {
         );
     }
 
-    get secureLoginButton() {
-        return this.driver.$("~Secure Login");
-    }
-
 
     // =========================================
     // Mobile Number Actions
@@ -44,7 +40,7 @@ class LoginPage {
 
     async enterMobileNumber(mobileNumber) {
 
-        await this.mobileNumberField.waitForExist({
+        await this.mobileNumberField.waitForDisplayed({
             timeout: 30000
         });
 
@@ -58,7 +54,7 @@ class LoginPage {
 
     async clickSendOtp() {
 
-        await this.sendOtpButton.waitForExist({
+        await this.sendOtpButton.waitForDisplayed({
             timeout: 30000
         });
 
@@ -82,6 +78,8 @@ class LoginPage {
 
     async enterTPIN(tpin) {
 
+        console.log("Entering TPIN...");
+
         await this.tpinField.waitForDisplayed({
             timeout: 30000
         });
@@ -89,16 +87,19 @@ class LoginPage {
         await this.tpinField.click();
 
         await this.tpinField.setValue(tpin);
-    }
 
+        console.log("TPIN entered.");
 
-    async clickSecureLogin() {
+        // ORCA automatically processes Secure Login
+        // after the complete TPIN is entered.
+        console.log("Waiting for ORCA to process Secure Login...");
 
-        await this.secureLoginButton.waitForDisplayed({
-            timeout: 30000
-        });
-
-        await this.secureLoginButton.click();
+        /*try {
+            await this.driver.hideKeyboard();
+            console.log("Keyboard hidden.");
+        } catch (error) {
+            console.log("Keyboard already hidden.");
+        }*/
     }
 }
 

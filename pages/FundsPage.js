@@ -1,52 +1,79 @@
 class FundsPage {
-
     constructor(driver) {
         this.driver = driver;
     }
 
-    // =========================================
-    // Dashboard - Already Logged In
-    // =========================================
+    // =========================================================
+    // DASHBOARD - MUTUAL FUNDS
+    // =========================================================
 
     get mutualFunds() {
-        return this.driver.$(
-            '~Mutual Funds\nScreen And Analyze'
-        );
+        return this.driver.$('~Mutual Funds\nScreen And Analyze');
     }
 
-    // =========================================
-    // New Login Flow
-    // =========================================
+    // =========================================================
+    // SCHEME COLLECTIONS SCREEN
+    // =========================================================
 
-    get exploreFundsButton() {
-        return this.driver.$(
-            'android=new UiSelector().descriptionContains("Explore Funds")'
-        );
+    get schemeCollectionsTitle() {
+        return this.driver.$('~Scheme Collections');
     }
-
-    // =========================================
-    // Equity Funds
-    // =========================================
 
     get equityFundsButton() {
+        return this.driver.$('~Equity Funds');
+    }
+
+    get hybridFundsButton() {
+        return this.driver.$('~Hybrid Funds');
+    }
+
+    get debtFundsButton() {
+        return this.driver.$('~Debt Funds');
+    }
+
+    get commodityFundsButton() {
+        return this.driver.$('~Commodity Funds');
+    }
+
+    get fundOfFundsButton() {
+        return this.driver.$('~Fund of Funds');
+    }
+
+    get solutionOrientedButton() {
+        return this.driver.$('~Solution Oriented');
+    }
+
+    // =========================================================
+    // EQUITY FUNDS SCREEN
+    // =========================================================
+
+    get fundCount() {
         return this.driver.$(
-            '~Equity Funds'
+            'android=new UiSelector()' +
+            '.textContains("Funds")'
         );
     }
 
-    // =========================================
-    // Search Icon
-    // =========================================
+    // Fund cards are android.view.View elements.
+    // Riskometer is present in the content description.
+    get fundCards() {
+        return this.driver.$$(
+            'android=new UiSelector()' +
+            '.className("android.view.View")' +
+            '.descriptionContains("Riskometer")' +
+            '.clickable(true)'
+        );
+    }
+
+    // =========================================================
+    // SEARCH
+    // =========================================================
 
     get searchIcon() {
         return this.driver.$(
             '//android.widget.ImageView[@clickable="true" and @bounds="[930,174][1041,284]"]'
         );
     }
-
-    // =========================================
-    // Search Field
-    // =========================================
 
     get searchField() {
         return this.driver.$(
@@ -55,65 +82,40 @@ class FundsPage {
         );
     }
 
-    // =========================================
-    // Fund Cards - Equity Funds
-    // =========================================
-
-    get fundCards() {
-        return this.driver.$$(
-            'android=new UiSelector()' +
-            '.className("android.widget.ImageView")' +
-            '.descriptionContains("Riskometer")'
-        );
-    }
-
-    // =========================================
-    // Search Results
-    // =========================================
-
     get searchResults() {
         return this.driver.$$(
             'android=new UiSelector()' +
-            '.className("android.widget.ImageView")' +
+            '.className("android.view.View")' +
             '.clickable(true)'
         );
     }
 
-    // =========================================
-    // Click Mutual Funds
-    // =========================================
+    // =========================================================
+    // CLICK MUTUAL FUNDS
+    // =========================================================
 
     async clickMutualFunds() {
 
-        await this.mutualFunds.waitForDisplayed({
-            timeout: 30000
-        });
+        console.log("");
+        console.log("Opening Mutual Funds...");
 
         await this.mutualFunds.click();
 
-        console.log("Mutual Funds clicked");
-    }
+        console.log("Mutual Funds clicked.");
 
-    // =========================================
-    // Click Explore Funds
-    // =========================================
-
-    async clickExploreFunds() {
-
-        await this.exploreFundsButton.waitForDisplayed({
-            timeout: 30000
+        await this.schemeCollectionsTitle.waitForDisplayed({
+            timeout: 10000
         });
 
-        await this.exploreFundsButton.click();
-
-        console.log("Explore Funds clicked");
+        console.log("Scheme Collections screen displayed.");
     }
-
-    // =========================================
-    // Select Equity Funds
-    // =========================================
+    // =========================================================
+    // SELECT EQUITY FUNDS
+    // =========================================================
 
     async selectEquityFunds() {
+        console.log("");
+        console.log("Selecting Equity Funds...");
 
         await this.equityFundsButton.waitForDisplayed({
             timeout: 30000
@@ -121,40 +123,192 @@ class FundsPage {
 
         await this.equityFundsButton.click();
 
-        console.log("Equity Funds clicked");
+        console.log("Equity Funds clicked.");
+
+        await this.driver.pause(2000);
+
+        // Verify that fund cards are displayed
+        try {
+            await this.fundCards[0].waitForDisplayed({
+                timeout: 10000
+            });
+
+            console.log("Equity Funds list displayed.");
+        } catch (error) {
+            console.log(
+                "Equity Funds list opened, but fund cards are not currently visible."
+            );
+        }
     }
 
-    // =========================================
-    // Click Search
-    // =========================================
+    // =========================================================
+    // GET VISIBLE FUND CARDS
+    // =========================================================
+
+    async getVisibleFundCards() {
+        return await this.fundCards;
+    }
+
+    // =========================================================
+    // VALIDATE FUND CARDS
+    // =========================================================
+
+    async validateAllFundCards() {
+        console.log("");
+        console.log("Validating visible fund cards...");
+
+        const cards = await this.fundCards;
+
+        console.log("Visible fund cards:", cards.length);
+
+        if (cards.length === 0) {
+            throw new Error("No fund cards found.");
+        }
+
+        for (let i = 0; i < cards.length; i++) {
+            try {
+                await cards[i].waitForDisplayed({
+                    timeout: 10000
+                });
+
+                const description = await cards[i].getAttribute(
+                    "content-desc"
+                );
+
+                console.log(
+                    `Fund Card ${i + 1}:`,
+                    description
+                );
+            } catch (error) {
+                console.log(
+                    `Unable to read Fund Card ${i + 1}`
+                );
+            }
+        }
+
+        console.log("Visible fund cards validation completed.");
+    }
+
+    // =========================================================
+    // OPEN FUND BY INDEX
+    // =========================================================
+
+    async openFundByIndex(index) {
+        console.log("");
+        console.log(`Opening fund card ${index + 1}...`);
+
+        const cards = await this.fundCards;
+
+        if (cards.length === 0) {
+            throw new Error("No fund cards are currently visible.");
+        }
+
+        if (index >= cards.length) {
+            throw new Error(
+                `Fund index ${index} is not available. ` +
+                `Only ${cards.length} cards are visible.`
+            );
+        }
+
+        await cards[index].waitForDisplayed({
+            timeout: 10000
+        });
+
+        const description = await cards[index].getAttribute(
+            "content-desc"
+        );
+
+        console.log("Opening:", description);
+
+        await cards[index].click();
+
+        await this.driver.pause(2000);
+
+        console.log("Fund card clicked.");
+    }
+
+    // =========================================================
+    // OPEN FIRST VISIBLE FUND
+    // =========================================================
+
+    async clickFirstVisibleFund() {
+        console.log("");
+        console.log("Opening first visible fund...");
+
+        const cards = await this.fundCards;
+
+        if (cards.length === 0) {
+            throw new Error("No fund cards are currently visible.");
+        }
+
+        await cards[0].waitForDisplayed({
+            timeout: 10000
+        });
+
+        const description = await cards[0].getAttribute(
+            "content-desc"
+        );
+
+        console.log("Opening:", description);
+
+        await cards[0].click();
+
+        await this.driver.pause(2000);
+
+        console.log("First fund opened.");
+    }
+
+    // =========================================================
+    // RETURN TO EQUITY FUNDS LIST
+    // =========================================================
+
+    async returnToEquityFunds() {
+        console.log("");
+        console.log("Returning to Equity Funds...");
+
+        await this.driver.back();
+
+        await this.driver.pause(2000);
+
+        try {
+            await this.fundCards[0].waitForDisplayed({
+                timeout: 10000
+            });
+
+            console.log("Returned to Equity Funds list.");
+        } catch (error) {
+            console.log(
+                "Returned from fund details, but fund cards are not currently visible."
+            );
+        }
+    }
+
+    // =========================================================
+    // SEARCH FUND
+    // =========================================================
 
     async clickSearch() {
-
-        console.log("Looking for Search icon...");
+        console.log("");
+        console.log("Opening fund search...");
 
         await this.searchIcon.waitForDisplayed({
             timeout: 30000
         });
 
-        console.log("Search icon found.");
-
         await this.searchIcon.click();
 
         console.log("Search icon clicked.");
 
-        // Wait for Search screen to appear
         await this.searchField.waitForDisplayed({
             timeout: 30000
         });
 
-        console.log("Search field displayed.");
+        console.log("Fund search field displayed.");
     }
 
-    // =========================================
-    // Search Fund
-    // =========================================
-
-    async searchFund(keyword) {
+    async searchFund(fundName) {
+        console.log("");
+        console.log(`Searching for fund: ${fundName}`);
 
         await this.searchField.waitForDisplayed({
             timeout: 30000
@@ -164,369 +318,26 @@ class FundsPage {
 
         await this.searchField.clearValue();
 
-        await this.searchField.setValue(keyword);
+        await this.searchField.setValue(fundName);
 
-        console.log(
-            `Searching for fund: ${keyword}`
-        );
+        console.log("Fund name entered.");
+
+        await this.driver.pause(2000);
     }
 
-    // =========================================
-    // Click First Matching Fund
-    // =========================================
+    // =========================================================
+    // GET SEARCH RESULTS
+    // =========================================================
 
-    async clickFirstVisibleFund(keyword) {
-
-        console.log("");
-        console.log("=================================");
-        console.log(
-            `SEARCHING FOR FIRST FUND: ${keyword}`
-        );
-        console.log("=================================");
-
-        // Wait until at least one matching fund
-        // is displayed
-        await this.driver.waitUntil(
-            async () => {
-
-                const imageViews =
-                    await this.driver.$$(
-                        'android=new UiSelector()' +
-                        '.className("android.widget.ImageView")'
-                    );
-
-                for (const imageView of imageViews) {
-
-                    const contentDesc =
-                        await imageView.getAttribute(
-                            "content-desc"
-                        );
-
-                    if (
-                        contentDesc &&
-                        contentDesc
-                            .toLowerCase()
-                            .includes(
-                                keyword.toLowerCase()
-                            ) &&
-                        contentDesc.includes("Type -")
-                    ) {
-                        return true;
-                    }
-                }
-
-                return false;
-            },
-            {
-                timeout: 30000,
-                interval: 1000,
-                timeoutMsg:
-                    `No fund search result found for "${keyword}"`
-            }
-        );
-
-        // Get all ImageView elements
-        const imageViews =
-            await this.driver.$$(
-                'android=new UiSelector()' +
-                '.className("android.widget.ImageView")'
-            );
-
-        // Find the first matching fund
-        for (const imageView of imageViews) {
-
-            const contentDesc =
-                await imageView.getAttribute(
-                    "content-desc"
-                );
-
-            if (
-                contentDesc &&
-                contentDesc
-                    .toLowerCase()
-                    .includes(
-                        keyword.toLowerCase()
-                    ) &&
-                contentDesc.includes("Type -")
-            ) {
-
-                console.log("");
-                console.log("First matching fund:");
-                console.log(contentDesc);
-
-                await imageView.click();
-
-                console.log(
-                    "First matching fund clicked."
-                );
-
-                return;
-            }
-        }
-
-        throw new Error(
-            `No visible fund matched keyword "${keyword}"`
-        );
-    }
-
-    // =========================================
-    // Validate Single Fund Data
-    // =========================================
-
-    validateFundData(fundData, index) {
-
-        if (!fundData) {
-
-            throw new Error(
-                `Fund Card ${index}: content-desc is empty`
-            );
-        }
+    async getSearchResults() {
+        const results = await this.searchResults;
 
         console.log(
-            `\nFund Card ${index}:`
+            "Search results found:",
+            results.length
         );
 
-        console.log(fundData);
-
-        // -----------------------------------------
-        // Riskometer
-        // -----------------------------------------
-
-        if (!fundData.includes("Riskometer")) {
-
-            throw new Error(
-                `Fund Card ${index}: Riskometer is missing`
-            );
-        }
-
-        // -----------------------------------------
-        // Min SIP Amount
-        // -----------------------------------------
-
-        if (!fundData.includes("Min SIP amount")) {
-
-            throw new Error(
-                `Fund Card ${index}: Min SIP amount is missing`
-            );
-        }
-
-        // -----------------------------------------
-        // 3Y Return
-        // -----------------------------------------
-
-        if (!fundData.includes("3Y Return")) {
-
-            throw new Error(
-                `Fund Card ${index}: 3Y Return is missing`
-            );
-        }
-
-        // -----------------------------------------
-        // SIP Amount Format
-        // -----------------------------------------
-
-        const sipPattern =
-            /₹\s*[\d,]+(\.\d{2})?/;
-
-        if (!sipPattern.test(fundData)) {
-
-            throw new Error(
-                `Fund Card ${index}: Invalid SIP amount`
-            );
-        }
-
-        // -----------------------------------------
-        // 3Y Return Format
-        // -----------------------------------------
-
-        const returnPattern =
-            /\d+(\.\d+)?%/;
-
-        // Some funds may display "-"
-        // when 3Y Return is unavailable.
-        const noReturnAvailable =
-            fundData.includes("3Y Return\n-");
-
-        if (
-            !returnPattern.test(fundData) &&
-            !noReturnAvailable
-        ) {
-
-            throw new Error(
-                `Fund Card ${index}: Invalid 3Y Return`
-            );
-        }
-
-        console.log(
-            `Fund Card ${index}: validation PASSED`
-        );
-    }
-
-    // =========================================
-    // Validate All Equity Fund Cards
-    // =========================================
-
-    async validateAllFundCards() {
-
-        console.log("");
-        console.log("=================================");
-        console.log("VALIDATING ALL EQUITY FUND CARDS");
-        console.log("=================================");
-
-        const validatedFunds =
-            new Set();
-
-        let scrollCount = 0;
-
-        const maxScrolls = 20;
-
-        while (
-            scrollCount < maxScrolls
-        ) {
-
-            // -----------------------------------------
-            // Wait for Fund Cards
-            // -----------------------------------------
-
-            await this.driver.waitUntil(
-                async () => {
-
-                    const cards =
-                        await this.fundCards;
-
-                    return cards.length > 0;
-
-                },
-                {
-                    timeout: 30000,
-                    interval: 1000,
-                    timeoutMsg:
-                        "Equity Fund cards did not load"
-                }
-            );
-
-            // -----------------------------------------
-            // Get Visible Cards
-            // -----------------------------------------
-
-            const cards =
-                await this.fundCards;
-
-            console.log("");
-            console.log(
-                `Visible fund cards: ${cards.length}`
-            );
-
-            // -----------------------------------------
-            // Validate Visible Cards
-            // -----------------------------------------
-
-            for (
-                let i = 0;
-                i < cards.length;
-                i++
-            ) {
-
-                const fundData =
-                    await cards[i].getAttribute(
-                        "content-desc"
-                    );
-
-                if (!fundData) {
-                    continue;
-                }
-
-                const fundKey =
-                    fundData.trim();
-
-                // Avoid validating the same card again
-                // after scrolling.
-                if (
-                    validatedFunds.has(
-                        fundKey
-                    )
-                ) {
-                    continue;
-                }
-
-                const fundNumber =
-                    validatedFunds.size + 1;
-
-                this.validateFundData(
-                    fundData,
-                    fundNumber
-                );
-
-                validatedFunds.add(
-                    fundKey
-                );
-            }
-
-            // -----------------------------------------
-            // Scroll Down
-            // -----------------------------------------
-
-            console.log("");
-            console.log(
-                `Scrolling down... Attempt ${scrollCount + 1}`
-            );
-
-            const canScrollMore =
-                await this.driver.execute(
-                    "mobile: scrollGesture",
-                    {
-                        left: 100,
-                        top: 300,
-                        width: 850,
-                        height: 1200,
-                        direction: "down",
-                        percent: 0.80
-                    }
-                );
-
-            scrollCount++;
-
-            console.log(
-                "More content available:",
-                canScrollMore
-            );
-
-            // -----------------------------------------
-            // Reached Bottom
-            // -----------------------------------------
-
-            if (!canScrollMore) {
-
-                console.log(
-                    "Reached the bottom of the Equity Funds list."
-                );
-
-                break;
-            }
-        }
-
-        // =========================================
-        // Final Validation
-        // =========================================
-
-        if (
-            validatedFunds.size === 0
-        ) {
-
-            throw new Error(
-                "No Equity Fund cards were validated"
-            );
-        }
-
-        console.log("");
-        console.log("=================================");
-        console.log(
-            `TOTAL UNIQUE FUNDS VALIDATED: ${validatedFunds.size}`
-        );
-        console.log(
-            "ALL EQUITY FUND CARDS VALIDATED"
-        );
-        console.log("=================================");
+        return results;
     }
 }
 

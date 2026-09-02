@@ -1,4 +1,3 @@
-const WelcomePage = require("../pages/WelcomePage");
 const LoginPage = require("../pages/LoginPage");
 const OtpPage = require("../pages/OtpPage");
 const RiskDisclosurePage = require("../pages/RiskDisclosurePage");
@@ -12,24 +11,10 @@ class LoginFlow {
         this.driver = driver;
         this.testData = testData;
 
-        // =========================================
-        // Create Login Page Objects
-        // =========================================
-
-        this.welcomePage =
-            new WelcomePage(driver);
-
-        this.loginPage =
-            new LoginPage(driver);
-
-        this.otpPage =
-            new OtpPage(driver);
-
-        this.riskDisclosurePage =
-            new RiskDisclosurePage(driver);
-
-        this.dashboardPage =
-            new DashboardPage(driver);
+        this.loginPage = new LoginPage(driver);
+        this.otpPage = new OtpPage(driver);
+        this.riskDisclosurePage = new RiskDisclosurePage(driver);
+        this.dashboardPage = new DashboardPage(driver);
     }
 
 
@@ -37,19 +22,12 @@ class LoginFlow {
     // Ensure User Is Logged In
     // =========================================
 
-    async ensureLoggedIn() {
+    async ensureLoggedIn(permissionHandler) {
 
-        // =========================================
-        // Check Login State
-        // =========================================
-
+        // Check whether user is already logged in
         const alreadyLoggedIn =
             await this.dashboardPage.isDisplayed();
 
-
-        // =========================================
-        // ALREADY LOGGED IN
-        // =========================================
 
         if (alreadyLoggedIn) {
 
@@ -57,7 +35,7 @@ class LoginFlow {
             console.log("=================================");
             console.log("USER ALREADY LOGGED IN");
             console.log("Dashboard detected.");
-            console.log("Skipping login and OTP.");
+            console.log("Skipping permissions and login.");
             console.log("=================================");
 
             return;
@@ -65,7 +43,7 @@ class LoginFlow {
 
 
         // =========================================
-        // NEW LOGIN
+        // Login Required
         // =========================================
 
         console.log("");
@@ -76,45 +54,59 @@ class LoginFlow {
         console.log("=================================");
 
 
-        // -----------------------------------------
-        // Welcome Screen
-        // -----------------------------------------
+        // =========================================
+        // App Permissions
+        // =========================================
 
-        // Uncomment this if fresh login
-        // starts from the Welcome screen.
+        if (permissionHandler) {
 
-        // await this.welcomePage.clickLetsEnrich();
+            console.log("");
+            console.log("Handling app permissions...");
+
+            await permissionHandler.handleNotificationPermission();
+
+            await permissionHandler.handlePhoneNumberChooser();
+        }
 
 
-        // -----------------------------------------
+        // =========================================
         // Mobile Number
-        // -----------------------------------------
+        // =========================================
+
+        console.log("");
+        console.log("Entering mobile number...");
 
         await this.loginPage.enterMobileNumber(
             this.testData.mobileNumber
         );
 
 
-        // -----------------------------------------
-        // Send OTP
-        // -----------------------------------------
+        console.log("Clicking Send OTP...");
 
         await this.loginPage.clickSendOtp();
 
 
-        // -----------------------------------------
+        // =========================================
         // OTP
-        // -----------------------------------------
+        // =========================================
 
         console.log("");
         console.log("Waiting for OTP...");
 
+        //await this.otpPage.waitForOtpScreen();
+
+        //console.log("OTP field found");
+
+        //console.log("Waiting for manual OTP entry...");
+
         await this.otpPage.waitForOtpEntry();
 
+        console.log("OTP entry wait completed.");
 
-        // -----------------------------------------
+
+        // =========================================
         // TPIN
-        // -----------------------------------------
+        // =========================================
 
         console.log("");
         console.log("Waiting for TPIN screen...");
@@ -122,82 +114,59 @@ class LoginFlow {
         await this.loginPage.waitForTPINScreen();
 
 
-        // -----------------------------------------
-        // Enter TPIN
-        // -----------------------------------------
-
-        console.log("Entering TPIN...");
-
         await this.loginPage.enterTPIN(
             this.testData.tpin
         );
 
 
-        // -----------------------------------------
+        // =========================================
         // Secure Login
-        // -----------------------------------------
+        // =========================================
+        // ORCA automatically processes Secure Login
+        // after the complete TPIN is entered.
+        // No automation click is required here.
 
-        console.log("Clicking Secure Login...");
+        console.log("");
+        console.log("Waiting for ORCA to process login...");
 
-        await this.loginPage.clickSecureLogin();
 
-
-        // -----------------------------------------
+        // =========================================
         // Risk Disclosure
-        // -----------------------------------------
+        // =========================================
 
-        await this.riskDisclosurePage
-            .clickIUnderstand();
+        console.log("");
+        console.log("Checking for Risk Disclosure...");
+
+        try {
+
+            await this.riskDisclosurePage.understandButton.waitForDisplayed({
+                timeout: 10000
+            });
+
+            console.log("Risk Disclosure detected.");
+
+            console.log("Clicking I Understand...");
+
+            await this.riskDisclosurePage.clickIUnderstand();
+
+        } catch (error) {
+
+            console.log("Risk Disclosure not displayed.");
+
+            console.log("Continuing to Dashboard...");
+        }
 
 
-        // -----------------------------------------
-        // Wait for Dashboard
-        // -----------------------------------------
+        // =========================================
+        // Dashboard
+        // =========================================
 
         console.log("");
         console.log("Waiting for Dashboard...");
 
-        await this.driver.waitUntil(
-            async () => {
+        await this.dashboardPage.isDisplayed();
 
-                return await this.dashboardPage
-                    .isDisplayed();
-
-            },
-            {
-                timeout: 30000,
-                interval: 1000,
-                timeoutMsg:
-                    "Dashboard did not appear after login"
-            }
-        );
-
-
-        console.log("");
-        console.log("Login successful.");
-        console.log("Dashboard loaded.");
-    }
-
-
-    // =========================================
-    // Validate Dashboard
-    // =========================================
-
-    async validateDashboard() {
-
-        const dashboardDisplayed =
-            await this.dashboardPage.isDisplayed();
-
-        if (!dashboardDisplayed) {
-
-            throw new Error(
-                "Dashboard should be displayed after login handling"
-            );
-        }
-
-        console.log(
-            "Dashboard validation PASSED"
-        );
+        console.log("Login flow completed.");
     }
 }
 

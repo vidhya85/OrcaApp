@@ -4,17 +4,19 @@ class OtpPage {
         this.driver = driver;
     }
 
+    // =========================================
+    // OTP Field
+    // =========================================
+
     get otpField() {
         return this.driver.$(
             'android=new UiSelector().className("android.widget.EditText")'
         );
     }
 
-    /*get continueButton() {
-        return this.driver.$("~Continue");
-    }*/
-   // =========================================
-    // TEMPORARY OTP SCREEN INSPECTION
+
+    // =========================================
+    // OTP SCREEN INSPECTION
     // =========================================
 
     async inspectOtpScreen() {
@@ -28,7 +30,8 @@ class OtpPage {
         console.log("          OTP SCREEN INSPECTION");
         console.log("========================================");
 
-        const source = await this.driver.getPageSource();
+        const source =
+            await this.driver.getPageSource();
 
         console.log(source);
 
@@ -37,17 +40,15 @@ class OtpPage {
         console.log("       END OTP SCREEN INSPECTION");
         console.log("========================================");
     }
+
+
     // =========================================
-    // OTP ENTRY
+    // WAIT FOR OTP SCREEN
     // =========================================
 
     async waitForOtpEntry() {
 
         console.log("Waiting for OTP screen...");
-
-        await this.otpField.waitForExist({
-            timeout: 30000
-        });
 
         await this.otpField.waitForDisplayed({
             timeout: 30000
@@ -56,51 +57,27 @@ class OtpPage {
         console.log("OTP field found");
         console.log("Waiting for manual OTP entry...");
 
-        await this.driver.waitUntil(
-            async () => {
+        /*
+         * OTP is entered manually.
+         *
+         * ORCA automatically moves to the TPIN
+         * screen after successful OTP verification.
+         *
+         * Therefore we do NOT read the OTP text
+         * attribute and we do NOT wait for the
+         * OTP field to disappear.
+         *
+         * LoginFlow will verify the TPIN screen
+         * immediately after this method.
+         */
 
-                try {
+        await this.driver.pause(5000);
 
-                    const otpText =
-                        await this.otpField.getAttribute("text");
-
-                    const otpLength =
-                        otpText ? otpText.length : 0;
-
-                    console.log("OTP length:", otpLength);
-
-                    return otpLength === 6;
-
-                } catch (error) {
-
-                    return false;
-                }
-            },
-            {
-                timeout: 120000,
-                interval: 1000,
-                timeoutMsg:
-                    "OTP was not entered within 2 minutes"
-            }
+        console.log(
+            "OTP entry wait completed."
         );
-
-        console.log("6-digit OTP entered");
     }
-
-    /*async clickContinue() {
-
-        await this.continueButton.waitForExist({
-            timeout: 30000
-        });
-
-        await this.continueButton.waitForDisplayed({
-            timeout: 30000
-        });
-
-        await this.continueButton.click();
-
-        console.log("Continue clicked");
-    }*/
 }
+
 
 module.exports = OtpPage;

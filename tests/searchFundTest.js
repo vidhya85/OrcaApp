@@ -61,6 +61,13 @@ async function main() {
         await permissionHandler
             .handleNotificationPermission();
 
+        // =========================================
+        // Handle Google Phone Number Chooser
+        // =========================================
+
+        await permissionHandler
+            .handlePhoneNumberChooser();
+
 
         // =========================================
         // Login / Already Logged In
