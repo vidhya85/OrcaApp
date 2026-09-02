@@ -12,5 +12,8 @@
   "type": "commonjs",
   "dependencies": {
     "webdriverio": "^9.30.1"
+  },
+  "devDependencies": {
+    "@wdio/cli": "^9.31.5"
   }
 }

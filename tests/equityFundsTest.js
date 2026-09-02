@@ -14,18 +14,9 @@ const {
 
 async function main() {
 
-    // =========================================
-    // Create Appium Driver
-    // =========================================
-
     const driver = await createDriver();
 
-
     try {
-
-        // =========================================
-        // Launch Orca App
-        // =========================================
 
         await launchApp(driver);
 
@@ -34,9 +25,9 @@ async function main() {
         console.log("=================================");
 
 
-        // =========================================
-        // Create Page Objects / Utilities
-        // =========================================
+        // =====================================================
+        // INITIALIZE PAGE OBJECTS
+        // =====================================================
 
         const permissionHandler =
             new PermissionHandler(driver);
@@ -50,32 +41,36 @@ async function main() {
                 testData
             );
 
+        const fundDetailsPage =
+            new FundDetailsPage(driver);
 
-        // =========================================
-        // Login / Already Logged In
-        // =========================================
+
+        // =====================================================
+        // LOGIN
+        // =====================================================
 
         await loginFlow.ensureLoggedIn(
             permissionHandler
         );
 
 
-        // =========================================
-        // Open Mutual Funds
-        // =========================================
+        // =====================================================
+        // OPEN MUTUAL FUNDS
+        // =====================================================
 
         await fundsPage.clickMutualFunds();
 
-        // =========================================
-        // Select Equity Funds
-        // =========================================
+
+        // =====================================================
+        // OPEN EQUITY FUNDS
+        // =====================================================
 
         await fundsPage.selectEquityFunds();
 
 
-        // =========================================
-        // Validate All Equity Fund Cards
-        // =========================================
+        // =====================================================
+        // VALIDATE INITIAL FUND CARDS
+        // =====================================================
 
         console.log("");
         console.log("Validating Fund Cards...");
@@ -83,86 +78,296 @@ async function main() {
         await fundsPage.validateAllFundCards();
 
 
-                // =========================================
-        // Fund Details - Validate All Visible Funds
-        // =========================================
+        // =====================================================
+        // TRACK PROCESSED FUNDS
+        // =====================================================
 
-        const fundDetailsPage =
-            new FundDetailsPage(driver);
+        const processedFunds = new Set();
 
-        //const visibleFunds =
-        //    await fundsPage.getVisibleFundCards();
+        let scrollAttempts = 0;
 
-        const fundCount =(await fundsPage.getVisibleFundCards()).length;
-
-        console.log("");
-        console.log("=================================");
-        console.log(`TOTAL VISIBLE FUNDS: ${fundCount}`);
-        console.log("=================================");
+        const maxScrollAttempts = 50;
 
 
-        for (let i = 0; i < fundCount; i++) {
+        // =====================================================
+        // PROCESS ALL FUNDS
+        // =====================================================
+
+        while (true) {
 
             console.log("");
             console.log("=================================");
-            console.log(`VALIDATING FUND ${i + 1} OF ${fundCount}`);
+            console.log("CHECKING VISIBLE FUND CARDS");
             console.log("=================================");
 
 
-            // Open fund
-            await fundsPage.openFundByIndex(i);
+            const cards =
+                await fundsPage.getVisibleFundCards();
 
 
-            // Validate Overview
-            await fundDetailsPage.validateOverview();
+            console.log(
+                "Currently visible fund cards:",
+                cards.length
+            );
 
 
-            // Validate Nifty Graph
-            await fundDetailsPage.validateNiftyGraph();
+            let newFundFound = false;
 
 
-            // Open Holdings
-            await fundDetailsPage.clickHoldings();
+            // =================================================
+            // FIND AN UNPROCESSED FUND
+            // =================================================
+
+            for (let i = 0; i < cards.length; i++) {
+
+                const description =
+                    await cards[i].getAttribute(
+                        "content-desc"
+                    );
 
 
-            // Validate Holdings
-            await fundDetailsPage.validateHoldings();
+                if (!description) {
+                    console.log(
+                        `Fund Card ${i + 1} has no content description.`
+                    );
+                    continue;
+                }
 
 
-            // Open Scheme
-            await fundDetailsPage.clickScheme();
+                // Fund name is the first line
+                // of the content description.
+
+                const fundName =
+                    description
+                        .split("\n")[0]
+                        .trim();
 
 
-            // Validate Scheme
-            await fundDetailsPage.validateScheme();
+                console.log("");
+                console.log(
+                    `Visible Fund ${i + 1}: ${fundName}`
+                );
 
 
-            // Return to Equity Funds
-            await fundsPage.returnToEquityFunds();
+                // =================================================
+                // SKIP ALREADY PROCESSED FUNDS
+                // =================================================
 
+                if (processedFunds.has(fundName)) {
+
+                    console.log(
+                        `${fundName} already validated - skipping.`
+                    );
+
+                    continue;
+                }
+
+
+                // =================================================
+                // NEW FUND FOUND
+                // =================================================
+
+                newFundFound = true;
+
+
+                console.log("");
+                console.log("=================================");
+                console.log(
+                    `VALIDATING FUND: ${fundName}`
+                );
+                console.log("=================================");
+
+
+                // =================================================
+                // OPEN FUND
+                // =================================================
+
+                await fundsPage.openFundByIndex(i);
+
+
+                // =================================================
+                // FUND DETAILS - OVERVIEW
+                // =================================================
+
+                console.log("");
+                console.log(
+                    `Validating Overview - ${fundName}`
+                );
+
+                await fundDetailsPage.validateOverview();
+
+
+                // =================================================
+                // NIFTY GRAPH
+                // =================================================
+
+                console.log("");
+                console.log(
+                    `Validating Nifty Graph - ${fundName}`
+                );
+
+                await fundDetailsPage.validateNiftyGraph();
+
+
+                // =================================================
+                // HOLDINGS
+                // =================================================
+
+                console.log("");
+                console.log(
+                    `Validating Holdings - ${fundName}`
+                );
+
+                await fundDetailsPage.clickHoldings();
+
+                await fundDetailsPage.validateHoldings();
+
+
+                // =================================================
+                // SCHEME
+                // =================================================
+
+                console.log("");
+                console.log(
+                    `Validating Scheme - ${fundName}`
+                );
+
+                await fundDetailsPage.clickScheme();
+
+                await fundDetailsPage.validateScheme();
+
+
+                // =================================================
+                // MARK FUND AS PROCESSED
+                // =================================================
+
+                processedFunds.add(fundName);
+
+
+                console.log("");
+                console.log(
+                    `FUND VALIDATION PASSED: ${fundName}`
+                );
+
+
+                // =================================================
+                // RETURN TO EQUITY FUNDS LIST
+                // =================================================
+
+                await fundsPage.returnToEquityFunds();
+
+
+                console.log("");
+                console.log(
+                    `Total funds validated: ${processedFunds.size}`
+                );
+
+
+                // =================================================
+                // IMPORTANT
+                // =================================================
+                // After returning from Fund Details,
+                // reacquire the fund cards.
+                //
+                // The previous card references may no longer
+                // represent the current screen.
+                //
+                // Therefore break and restart the while loop.
+
+                break;
+            }
+
+
+            // =====================================================
+            // IF A NEW FUND WAS FOUND
+            // =====================================================
+            // Continue from the beginning so that the current
+            // visible cards are reacquired.
+
+            if (newFundFound) {
+
+                continue;
+            }
+
+
+            // =====================================================
+            // NO NEW FUND IN CURRENT SCREEN
+            // =====================================================
 
             console.log("");
-            console.log(`FUND ${i + 1} VALIDATION PASSED`);
+            console.log(
+                "No new funds found in current visible area."
+            );
+
+
+            // =====================================================
+            // SAFETY LIMIT
+            // =====================================================
+
+            scrollAttempts++;
+
+            if (scrollAttempts > maxScrollAttempts) {
+
+                console.log("");
+                console.log(
+                    "Maximum scroll attempts reached."
+                );
+
+                break;
+            }
+
+
+            // =====================================================
+            // SCROLL DOWN
+            // =====================================================
+
+            console.log("");
+            console.log(
+                `Scroll attempt ${scrollAttempts}`
+            );
+
+
+            const canScroll =
+                await fundsPage.scrollFundList();
+
+
+            // =====================================================
+            // END OF LIST
+            // =====================================================
+
+            if (!canScroll) {
+
+                console.log("");
+                console.log(
+                    "Reached the end of Equity Funds list."
+                );
+
+                break;
+            }
         }
 
 
-        // =========================================
-        // TEST PASSED
-        // =========================================
+        // =====================================================
+        // FINAL RESULT
+        // =====================================================
+
+        console.log("");
+        console.log("=================================");
+        console.log("ALL FUNDS VALIDATION COMPLETED");
+        console.log("=================================");
+
+        console.log(
+            `TOTAL FUNDS VALIDATED: ${processedFunds.size}`
+        );
+
 
         console.log("");
         console.log("=================================");
         console.log("EQUITY FUNDS TEST PASSED");
         console.log("=================================");
 
-    }
 
-
-    // =========================================
-    // TEST FAILED
-    // =========================================
-
-    catch (error) {
+    } catch (error) {
 
         console.error("");
         console.error("=================================");
@@ -171,17 +376,10 @@ async function main() {
 
         console.error(error);
 
-    }
 
-
-    // =========================================
-    // CLEANUP
-    // =========================================
-
-    finally {
+    } finally {
 
         await closeDriver(driver);
-
     }
 }
 

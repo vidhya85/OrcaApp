@@ -148,6 +148,37 @@ class FundsPage {
     async getVisibleFundCards() {
         return await this.fundCards;
     }
+    // =========================================================
+    // SCROLL EQUITY FUNDS LIST
+    // =========================================================
+
+    async scrollFundList() {
+
+        console.log("");
+        console.log("Scrolling Equity Funds list...");
+
+        const canScroll = await this.driver.execute(
+            "mobile: scrollGesture",
+            {
+                left: 100,
+                top: 500,
+                width: 880,
+                height: 1300,
+                direction: "down",
+                percent: 0.50
+            }
+        );
+
+        await this.driver.pause(1000);
+        
+
+        console.log(
+            "More funds available:",
+            canScroll
+        );
+
+        return canScroll;
+    }
 
     // =========================================================
     // VALIDATE FUND CARDS

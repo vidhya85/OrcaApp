@@ -142,6 +142,12 @@ class FundDetailsPage {
         );
     }
 
+    get holdings() {
+        return this.driver.$$(
+            '//android.widget.ScrollView//android.view.View[@content-desc and contains(@content-desc, "%")]'
+        );
+    }
+
 
     // =========================================
     // SCHEME ELEMENTS
@@ -430,233 +436,206 @@ class FundDetailsPage {
     // =========================================
     // VALIDATE ALL HOLDINGS
     // =========================================
-
     async validateHoldings() {
-
         console.log("");
         console.log("=================================");
-        console.log("VALIDATING ALL HOLDINGS");
+        console.log("VALIDATING HOLDINGS");
         console.log("=================================");
 
+        // -----------------------------------------
+        // Validate Holdings section
+        // -----------------------------------------
+
         await this.categoryBasedHoldings.waitForDisplayed({
-            timeout: 30000
+            timeout: 10000
         });
 
-        console.log(
-            "Category Based Holdings displayed."
-        );
+        console.log("Category Based Holdings displayed.");
 
         await this.equityTab.waitForDisplayed({
-            timeout: 30000
-        });
-
-        await this.debtTab.waitForDisplayed({
-            timeout: 30000
-        });
-
-        await this.othersTab.waitForDisplayed({
-            timeout: 30000
+            timeout: 10000
         });
 
         console.log("Equity tab displayed.");
+
+        await this.debtTab.waitForDisplayed({
+            timeout: 10000
+        });
+
         console.log("Debt tab displayed.");
+
+        await this.othersTab.waitForDisplayed({
+            timeout: 10000
+        });
+
         console.log("Others tab displayed.");
+
+        // -----------------------------------------
+        // Dynamically validate holdings
+        // -----------------------------------------
+
+        console.log("");
+        console.log("Validating holdings dynamically...");
 
         const validatedHoldings = new Set();
 
-        let scrollAttempt = 0;
-        let reachedBottom = false;
+        let scrollAttempts = 0;
+        const maxScrollAttempts = 30;
 
-        const readVisibleHoldings = async () => {
+        while (scrollAttempts < maxScrollAttempts) {
 
-            const allElements =
-                await this.driver.$$("*");
-
-            const holdingCandidates = [];
-
-            for (const element of allElements) {
-
-                const contentDesc =
-                    await element.getAttribute(
-                        "content-desc"
-                    );
-
-                if (!contentDesc) {
-                    continue;
-                }
-
-                if (
-                    /\n\s*\d+(\.\d+)?%\s*$/.test(
-                        contentDesc
-                    )
-                ) {
-
-                    holdingCandidates.push(
-                        contentDesc
-                    );
-                }
-            }
-
-            return holdingCandidates;
-        };
-
-
-        while (true) {
-
-            scrollAttempt++;
+            const holdings = await this.holdings;
 
             console.log("");
             console.log(
-                `Checking holdings... Attempt ${scrollAttempt}`
+                `Visible holding elements: ${holdings.length}`
             );
 
-            const holdingCandidates =
-                await readVisibleHoldings();
+            let newHoldingFound = false;
 
-            console.log(
-                `Holding candidates visible: ${holdingCandidates.length}`
-            );
+            // -----------------------------------------
+            // Validate currently visible holdings
+            // -----------------------------------------
 
-            let newHoldingsFound = 0;
+            for (const holding of holdings) {
 
-            for (
-                const contentDesc of holdingCandidates
-            ) {
+                try {
+                    await holding.waitForDisplayed({
+                        timeout: 5000
+                    });
 
-                const parts =
-                    contentDesc
-                        .split("\n")
-                        .map(value => value.trim())
-                        .filter(Boolean);
+                    const description =
+                        await holding.getAttribute("content-desc");
 
-                if (parts.length < 2) {
-                    continue;
+                    if (!description) {
+                        continue;
+                    }
+
+                    const cleanDescription =
+                        description.trim();
+
+                    if (!validatedHoldings.has(cleanDescription)) {
+
+                        console.log("");
+                        console.log(
+                            "Holding:",
+                            cleanDescription.replace(/\n/g, " | ")
+                        );
+
+                        // Validate holding name + percentage
+                        const parts =
+                            cleanDescription.split("\n");
+
+                        if (parts.length < 2) {
+                            throw new Error(
+                                `Invalid holding format: ${cleanDescription}`
+                            );
+                        }
+
+                        const holdingName =
+                            parts[0].trim();
+
+                        const percentage =
+                            parts[1].trim();
+
+                        if (!holdingName) {
+                            throw new Error(
+                                "Holding name is empty."
+                            );
+                        }
+
+                        if (!/^\d+(\.\d+)?%$/.test(percentage)) {
+                            throw new Error(
+                                `Invalid holding percentage: ${percentage}`
+                            );
+                        }
+
+                        validatedHoldings.add(
+                            cleanDescription
+                        );
+
+                        newHoldingFound = true;
+
+                        console.log(
+                            "Holding validation PASSED."
+                        );
+                    }
+
+                } catch (error) {
+
+                    throw new Error(
+                        `Holding validation failed: ${error.message}`
+                    );
                 }
-
-                const holdingName =
-                    parts
-                        .slice(0, -1)
-                        .join(" ")
-                        .trim();
-
-                const percentage =
-                    parts[parts.length - 1];
-
-                assert.ok(
-                    holdingName.length > 0,
-                    "Holding name should not be empty"
-                );
-
-                assert.match(
-                    percentage,
-                    /^\d+(\.\d+)?%$/,
-                    `Invalid holding percentage: ${percentage}`
-                );
-
-                const holdingKey =
-                    `${holdingName}|${percentage}`;
-
-                if (
-                    validatedHoldings.has(
-                        holdingKey
-                    )
-                ) {
-                    continue;
-                }
-
-                validatedHoldings.add(
-                    holdingKey
-                );
-
-                newHoldingsFound++;
-
-                console.log("");
-                console.log(
-                    `Holding ${validatedHoldings.size}:`
-                );
-
-                console.log(
-                    `Name: ${holdingName}`
-                );
-
-                console.log(
-                    `Percentage: ${percentage}`
-                );
-
-                console.log(
-                    "Validation PASSED"
-                );
             }
 
-            console.log("");
             console.log(
-                `New holdings found: ${newHoldingsFound}`
+                `Unique holdings validated so far: ${validatedHoldings.size}`
             );
 
-            if (reachedBottom) {
-
-                console.log(
-                    "Final holdings read completed."
-                );
-
-                break;
-            }
-
-            console.log("Scrolling down...");
+            // -----------------------------------------
+            // Scroll to next batch
+            // -----------------------------------------
 
             const canScroll =
                 await this.driver.execute(
                     "mobile: scrollGesture",
                     {
                         left: 100,
-                        top: 450,
-                        width: 900,
-                        height: 1100,
+                        top: 1418,
+                        width: 880,
+                        height: 900,
                         direction: "down",
-                        percent: 0.75
+                        percent: 0.50
                     }
                 );
 
+            await this.driver.pause(1000);
+
+            scrollAttempts++;
+
             console.log(
-                `More content available: ${canScroll}`
+                "More holdings available:",
+                canScroll
             );
 
-            if (canScroll === false) {
+            // -----------------------------------------
+            // Stop conditions
+            // -----------------------------------------
 
+            if (!canScroll) {
                 console.log(
-                    "Scroll reached the bottom."
+                    "Reached end of Holdings list."
                 );
-
-                reachedBottom = true;
-
-                continue;
+                break;
             }
 
-            await this.driver.pause(500);
+            if (!newHoldingFound) {
+                console.log(
+                    "No new holdings detected after scroll."
+                );
+                break;
+            }
         }
 
+        // -----------------------------------------
+        // Final validation
+        // -----------------------------------------
 
-        if (
-            validatedHoldings.size === 0
-        ) {
-
+        if (validatedHoldings.size === 0) {
             throw new Error(
                 "No valid holdings were found."
             );
         }
 
         console.log("");
-        console.log("=================================");
         console.log(
-            `TOTAL HOLDINGS VALIDATED: ${validatedHoldings.size}`
+            `Total unique holdings validated: ${validatedHoldings.size}`
         );
-        console.log("=================================");
-        console.log(
-            "ALL HOLDINGS VALIDATION PASSED"
-        );
+
+        console.log("");
+        console.log("HOLDINGS VALIDATION PASSED");
     }
-
-
     // =========================================
     // CLICK SCHEME
     // =========================================
