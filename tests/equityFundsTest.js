@@ -1,9 +1,10 @@
 const FundsPage = require("../pages/FundsPage");
-
 const testData = require("../config/testData");
 const PermissionHandler = require("../utils/PermissionHandler");
 const LoginFlow = require("../utils/LoginFlow");
 const FundDetailsPage = require("../pages/FundDetailsPage");
+const ScreenshotUtils = require("../utils/ScreenshotUtils");
+const TestReport = require("../utils/TestReport");
 
 const {
     createDriver,
@@ -15,62 +16,57 @@ const {
 async function main() {
 
     const driver = await createDriver();
+    const testReport =
+    new TestReport("Equity Funds Test");
+    let currentFund = "Unknown";
+    let currentSection = "Unknown";
 
     try {
-
-        await launchApp(driver);
 
         console.log("=================================");
         console.log("EQUITY FUNDS TEST STARTED");
         console.log("=================================");
 
+        await launchApp(driver);
 
-        // =====================================================
-        // INITIALIZE PAGE OBJECTS
-        // =====================================================
+        // -----------------------------------------
+        // Initialize Page Objects
+        // -----------------------------------------
 
         const permissionHandler =
             new PermissionHandler(driver);
 
+        const loginFlow =
+            new LoginFlow(driver, testData);
+
         const fundsPage =
             new FundsPage(driver);
-
-        const loginFlow =
-            new LoginFlow(
-                driver,
-                testData
-            );
 
         const fundDetailsPage =
             new FundDetailsPage(driver);
 
 
-        // =====================================================
-        // LOGIN
-        // =====================================================
+        // -----------------------------------------
+        // Login / Session
+        // -----------------------------------------
 
         await loginFlow.ensureLoggedIn(
             permissionHandler
         );
 
 
-        // =====================================================
-        // OPEN MUTUAL FUNDS
-        // =====================================================
+        // -----------------------------------------
+        // Navigate to Equity Funds
+        // -----------------------------------------
 
         await fundsPage.clickMutualFunds();
-
-
-        // =====================================================
-        // OPEN EQUITY FUNDS
-        // =====================================================
 
         await fundsPage.selectEquityFunds();
 
 
-        // =====================================================
-        // VALIDATE INITIAL FUND CARDS
-        // =====================================================
+        // -----------------------------------------
+        // Validate Fund Cards
+        // -----------------------------------------
 
         console.log("");
         console.log("Validating Fund Cards...");
@@ -78,9 +74,9 @@ async function main() {
         await fundsPage.validateAllFundCards();
 
 
-        // =====================================================
-        // TRACK PROCESSED FUNDS
-        // =====================================================
+        // -----------------------------------------
+        // Process All Funds Dynamically
+        // -----------------------------------------
 
         const processedFunds = new Set();
 
@@ -89,34 +85,18 @@ async function main() {
         const maxScrollAttempts = 50;
 
 
-        // =====================================================
-        // PROCESS ALL FUNDS
-        // =====================================================
-
         while (true) {
-
-            console.log("");
-            console.log("=================================");
-            console.log("CHECKING VISIBLE FUND CARDS");
-            console.log("=================================");
-
 
             const cards =
                 await fundsPage.getVisibleFundCards();
 
-
+            console.log("");
             console.log(
-                "Currently visible fund cards:",
-                cards.length
+                `Currently visible fund cards: ${cards.length}`
             );
-
 
             let newFundFound = false;
 
-
-            // =================================================
-            // FIND AN UNPROCESSED FUND
-            // =================================================
 
             for (let i = 0; i < cards.length; i++) {
 
@@ -127,31 +107,28 @@ async function main() {
 
 
                 if (!description) {
+
                     console.log(
                         `Fund Card ${i + 1} has no content description.`
                     );
+
                     continue;
                 }
 
-
-                // Fund name is the first line
-                // of the content description.
 
                 const fundName =
                     description
                         .split("\n")[0]
                         .trim();
+                currentFund = fundName;
 
 
-                console.log("");
                 console.log(
                     `Visible Fund ${i + 1}: ${fundName}`
                 );
 
 
-                // =================================================
-                // SKIP ALREADY PROCESSED FUNDS
-                // =================================================
+                // Skip already validated funds
 
                 if (processedFunds.has(fundName)) {
 
@@ -162,10 +139,6 @@ async function main() {
                     continue;
                 }
 
-
-                // =================================================
-                // NEW FUND FOUND
-                // =================================================
 
                 newFundFound = true;
 
@@ -178,121 +151,104 @@ async function main() {
                 console.log("=================================");
 
 
-                // =================================================
-                // OPEN FUND
-                // =================================================
+                // -----------------------------------------
+                // Open Fund
+                // -----------------------------------------
 
                 await fundsPage.openFundByIndex(i);
 
 
-                // =================================================
-                // FUND DETAILS - OVERVIEW
-                // =================================================
-
-                console.log("");
+                // -----------------------------------------
+                // Fund Details - Overview
+                // -----------------------------------------
+                currentSection = "Overview";
                 console.log(
                     `Validating Overview - ${fundName}`
                 );
 
                 await fundDetailsPage.validateOverview();
 
-
-                // =================================================
-                // NIFTY GRAPH
-                // =================================================
-
-                console.log("");
+                // -----------------------------------------
+                // Nifty Graph
+                // -----------------------------------------
+                currentSection = "Nifty Graph";
                 console.log(
                     `Validating Nifty Graph - ${fundName}`
                 );
-
+                
                 await fundDetailsPage.validateNiftyGraph();
 
 
-                // =================================================
-                // HOLDINGS
-                // =================================================
-
-                console.log("");
+                // -----------------------------------------
+                // Holdings
+                // -----------------------------------------
+                currentSection = "Holdings";
                 console.log(
                     `Validating Holdings - ${fundName}`
                 );
-
+                
                 await fundDetailsPage.clickHoldings();
 
                 await fundDetailsPage.validateHoldings();
 
-
-                // =================================================
-                // SCHEME
-                // =================================================
-
-                console.log("");
+                // -----------------------------------------
+                // Scheme
+                // -----------------------------------------
+                currentSection = "Scheme";
                 console.log(
                     `Validating Scheme - ${fundName}`
                 );
-
+                
                 await fundDetailsPage.clickScheme();
 
                 await fundDetailsPage.validateScheme();
 
 
-                // =================================================
-                // MARK FUND AS PROCESSED
-                // =================================================
+                // -----------------------------------------
+                // Mark Fund as Processed
+                // -----------------------------------------
 
                 processedFunds.add(fundName);
 
+                testReport.addPassedFund(fundName);
 
                 console.log("");
                 console.log(
                     `FUND VALIDATION PASSED: ${fundName}`
                 );
 
-
-                // =================================================
-                // RETURN TO EQUITY FUNDS LIST
-                // =================================================
+                // -----------------------------------------
+                // Return to Equity Funds
+                // -----------------------------------------
 
                 await fundsPage.returnToEquityFunds();
 
 
-                console.log("");
                 console.log(
                     `Total funds validated: ${processedFunds.size}`
                 );
 
 
-                // =================================================
-                // IMPORTANT
-                // =================================================
-                // After returning from Fund Details,
-                // reacquire the fund cards.
-                //
-                // The previous card references may no longer
-                // represent the current screen.
-                //
-                // Therefore break and restart the while loop.
+                // The element references belong to the
+                // previous screen, so restart the loop
+                // and reacquire the fund cards.
 
                 break;
             }
 
 
-            // =====================================================
-            // IF A NEW FUND WAS FOUND
-            // =====================================================
-            // Continue from the beginning so that the current
-            // visible cards are reacquired.
+            // -----------------------------------------
+            // New Fund Found
+            // -----------------------------------------
 
             if (newFundFound) {
-
                 continue;
             }
 
 
-            // =====================================================
-            // NO NEW FUND IN CURRENT SCREEN
-            // =====================================================
+            // -----------------------------------------
+            // No New Fund - Scroll
+            // -----------------------------------------
 
             console.log("");
             console.log(
@@ -300,28 +256,17 @@ async function main() {
             );
 
 
-            // =====================================================
-            // SAFETY LIMIT
-            // =====================================================
-
             scrollAttempts++;
+
 
             if (scrollAttempts > maxScrollAttempts) {
 
-                console.log("");
-                console.log(
-                    "Maximum scroll attempts reached."
+                throw new Error(
+                    "Maximum fund list scroll attempts reached."
                 );
-
-                break;
             }
 
 
-            // =====================================================
-            // SCROLL DOWN
-            // =====================================================
-
-            console.log("");
             console.log(
                 `Scroll attempt ${scrollAttempts}`
             );
@@ -331,9 +276,9 @@ async function main() {
                 await fundsPage.scrollFundList();
 
 
-            // =====================================================
-            // END OF LIST
-            // =====================================================
+            // -----------------------------------------
+            // End of Fund List
+            // -----------------------------------------
 
             if (!canScroll) {
 
@@ -347,9 +292,9 @@ async function main() {
         }
 
 
-        // =====================================================
-        // FINAL RESULT
-        // =====================================================
+        // -----------------------------------------
+        // Final Result
+        // -----------------------------------------
 
         console.log("");
         console.log("=================================");
@@ -360,12 +305,14 @@ async function main() {
             `TOTAL FUNDS VALIDATED: ${processedFunds.size}`
         );
 
+        testReport.markPassed();
+
+        testReport.saveReport();
 
         console.log("");
         console.log("=================================");
         console.log("EQUITY FUNDS TEST PASSED");
         console.log("=================================");
-
 
     } catch (error) {
 
@@ -374,12 +321,40 @@ async function main() {
         console.error("EQUITY FUNDS TEST FAILED");
         console.error("=================================");
 
-        console.error(error);
+        console.error(
+            "Error:",
+            error.message
+        );
 
+        console.error(
+            error.stack
+        );
+
+        try {
+
+            const screenshotName =
+                `${currentFund}_${currentSection}_Failure`;
+
+            await ScreenshotUtils.capture(
+                driver,
+                screenshotName
+            );
+            
+
+        } catch (screenshotError) {
+
+            console.error(
+                "Failed to capture screenshot:",
+                screenshotError.message
+            );
+        }
+
+        throw error;
 
     } finally {
 
         await closeDriver(driver);
+
     }
 }
 
