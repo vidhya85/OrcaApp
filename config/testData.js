@@ -1,7 +1,7 @@
 const testData = {
-    mobileNumber: "9940065939",
-    fundSearchKeyword: "ici",
-    tpin: "280585"
+
+    fundSearchKeyword: "ici"
+    
 };
 
 module.exports = testData;

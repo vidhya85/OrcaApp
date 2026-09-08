@@ -316,46 +316,75 @@ async function main() {
 
     } catch (error) {
 
-        console.error("");
-        console.error("=================================");
-        console.error("EQUITY FUNDS TEST FAILED");
-        console.error("=================================");
+    console.error("");
+    console.error("=================================");
+    console.error("EQUITY FUNDS TEST FAILED");
+    console.error("=================================");
 
-        console.error(
-            "Error:",
-            error.message
+    console.error(
+        "Fund:",
+        currentFund
+    );
+
+    console.error(
+        "Section:",
+        currentSection
+    );
+
+    console.error(
+        "Error:",
+        error.message
+    );
+
+    console.error(
+        error.stack
+    );
+
+
+    // -----------------------------------------
+    // Add Failure To Test Report
+    // -----------------------------------------
+
+    testReport.addFailedFund(
+        currentFund,
+        currentSection,
+        error.message
+    );
+
+    testReport.markFailed();
+
+    testReport.saveReport();
+
+
+    // -----------------------------------------
+    // Capture Failure Screenshot
+    // -----------------------------------------
+
+    try {
+
+        const screenshotName =
+            `${currentFund}_${currentSection}_Failure`;
+
+        await ScreenshotUtils.capture(
+            driver,
+            screenshotName
         );
 
+    } catch (screenshotError) {
+
         console.error(
-            error.stack
+            "Failed to capture screenshot:",
+            screenshotError.message
         );
-
-        try {
-
-            const screenshotName =
-                `${currentFund}_${currentSection}_Failure`;
-
-            await ScreenshotUtils.capture(
-                driver,
-                screenshotName
-            );
-            
-
-        } catch (screenshotError) {
-
-            console.error(
-                "Failed to capture screenshot:",
-                screenshotError.message
-            );
-        }
-
-        throw error;
-
-    } finally {
-
-        await closeDriver(driver);
-
     }
+
+    throw error;
+
+} finally {
+
+    await closeDriver(driver);
+
+}
 }
 
 

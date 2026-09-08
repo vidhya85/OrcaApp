@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const LoginPage = require("../pages/LoginPage");
 const OtpPage = require("../pages/OtpPage");
 const RiskDisclosurePage = require("../pages/RiskDisclosurePage");
@@ -77,7 +79,7 @@ class LoginFlow {
         console.log("Entering mobile number...");
 
         await this.loginPage.enterMobileNumber(
-            this.testData.mobileNumber
+            process.env.MOBILE_NUMBER
         );
 
 
@@ -92,12 +94,6 @@ class LoginFlow {
 
         console.log("");
         console.log("Waiting for OTP...");
-
-        //await this.otpPage.waitForOtpScreen();
-
-        //console.log("OTP field found");
-
-        //console.log("Waiting for manual OTP entry...");
 
         await this.otpPage.waitForOtpEntry();
 
@@ -115,7 +111,7 @@ class LoginFlow {
 
 
         await this.loginPage.enterTPIN(
-            this.testData.tpin
+            process.env.TPIN
         );
 
 
