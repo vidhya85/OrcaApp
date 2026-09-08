@@ -65,6 +65,13 @@ class FundsPage {
         );
     }
 
+    get searchResultCards() {
+    return this.driver.$$(
+        'android=new UiSelector()' +
+        '.className("android.widget.ImageView")' +
+        '.clickable(true)'
+    );
+}
     // =========================================================
     // SEARCH
     // =========================================================
@@ -267,8 +274,7 @@ class FundsPage {
         console.log("");
         console.log("Opening first visible fund...");
 
-        const cards = await this.fundCards;
-
+        const cards = await this.searchResultCards;
         if (cards.length === 0) {
             throw new Error("No fund cards are currently visible.");
         }
@@ -288,6 +294,7 @@ class FundsPage {
         await this.driver.pause(2000);
 
         console.log("First fund opened.");
+        return description;
     }
 
     // =========================================================

@@ -173,150 +173,220 @@ class FundDetailsPage {
 
 
     // =========================================
-    // VALIDATE OVERVIEW
-    // =========================================
+// VALIDATE OVERVIEW
+// =========================================
 
-    async validateOverview() {
+async validateOverview() {
 
-        console.log("");
-        console.log("=================================");
-        console.log("VALIDATING OVERVIEW");
-        console.log("=================================");
+    console.log("");
+    console.log("=================================");
+    console.log("VALIDATING OVERVIEW");
+    console.log("=================================");
 
-        // -----------------------------------------
-        // Overview tab
-        // -----------------------------------------
+    // -----------------------------------------
+    // Overview tab
+    // -----------------------------------------
 
-        await this.overviewTab.waitForDisplayed({
-            timeout: 30000
-        });
+    await this.overviewTab.waitForDisplayed({
+        timeout: 30000
+    });
 
-        console.log("Overview tab displayed.");
+    assert.ok(
+        await this.overviewTab.isDisplayed(),
+        "Overview tab should be displayed"
+    );
 
-        // -----------------------------------------
-        // Category
-        // -----------------------------------------
+    console.log("Overview tab displayed.");
 
-        await this.categoryLabel.waitForDisplayed({
-            timeout: 30000
-        });
 
-        console.log("Category displayed.");
+    // -----------------------------------------
+    // Category
+    // -----------------------------------------
 
-        // -----------------------------------------
-        // Riskometer
-        // -----------------------------------------
+    await this.categoryLabel.waitForDisplayed({
+        timeout: 30000
+    });
 
-        await this.riskometerLabel.waitForDisplayed({
-            timeout: 30000
-        });
+    assert.ok(
+        await this.categoryLabel.isDisplayed(),
+        "Category should be displayed"
+    );
 
-        console.log("Riskometer displayed.");
+    console.log("Category displayed.");
 
-        // -----------------------------------------
-        // Day Returns
-        // -----------------------------------------
 
-        await this.dayReturnsLabel.waitForDisplayed({
-            timeout: 30000
-        });
+    // -----------------------------------------
+    // Riskometer
+    // -----------------------------------------
 
-        console.log("Day Returns displayed.");
+    await this.riskometerLabel.waitForDisplayed({
+        timeout: 30000
+    });
 
-        // -----------------------------------------
-        // Minimum Investment
-        // -----------------------------------------
+    assert.ok(
+        await this.riskometerLabel.isDisplayed(),
+        "Riskometer should be displayed"
+    );
 
-        await this.minimumInvestmentLabel.waitForDisplayed({
-            timeout: 30000
-        });
+    console.log("Riskometer displayed.");
 
-        console.log("Minimum Investment displayed.");
 
-        // -----------------------------------------
-        // Graph Section
-        // -----------------------------------------
+    // -----------------------------------------
+    // Day Returns
+    // -----------------------------------------
 
-        console.log("");
-        console.log("Validating graph section...");
+    await this.dayReturnsLabel.waitForDisplayed({
+        timeout: 30000
+    });
 
-        await this.maxReturnsLabel.waitForDisplayed({
-            timeout: 30000
-        });
+    assert.ok(
+        await this.dayReturnsLabel.isDisplayed(),
+        "Day Returns should be displayed"
+    );
 
-        console.log(
-            "Max Returns - Annualized displayed."
-        );
+    console.log("Day Returns displayed.");
 
-        // -----------------------------------------
-        // Graph Value
-        // -----------------------------------------
 
-        const graphValue =
-            await this.maxReturnsValue;
+    // -----------------------------------------
+    // Minimum Investment
+    // -----------------------------------------
 
-        await graphValue.waitForDisplayed({
-            timeout: 30000
-        });
+    await this.minimumInvestmentLabel.waitForDisplayed({
+        timeout: 30000
+    });
 
-        const value =
-            await graphValue.getAttribute("content-desc");
+    assert.ok(
+        await this.minimumInvestmentLabel.isDisplayed(),
+        "Minimum Investment should be displayed"
+    );
 
-        assert.ok(
-            value,
-            "Graph return value should be displayed"
-        );
+    console.log("Minimum Investment displayed.");
 
-        assert.match(
-            value,
-            /^\d+(\.\d+)?%$/,
-            `Invalid graph return value: ${value}`
-        );
 
-        console.log(
-            `Graph return value displayed: ${value}`
-        );
+    // -----------------------------------------
+    // Graph Section
+    // -----------------------------------------
 
-        // -----------------------------------------
-        // NIFTY
-        // -----------------------------------------
+    console.log("");
+    console.log("Validating graph section...");
 
-        await this.niftyLabel.waitForDisplayed({
-            timeout: 30000
-        });
+    await this.maxReturnsLabel.waitForDisplayed({
+        timeout: 30000
+    });
 
-        console.log("Nifty option displayed.");
+    assert.ok(
+        await this.maxReturnsLabel.isDisplayed(),
+        "Max Returns - Annualized should be displayed"
+    );
 
-        // -----------------------------------------
-        // Graph Period Buttons
-        // -----------------------------------------
+    console.log(
+        "Max Returns - Annualized displayed."
+    );
 
-        const periodButtons = [
-            { name: "1M", element: this.oneMonthButton },
-            { name: "6M", element: this.sixMonthButton },
-            { name: "1Y", element: this.oneYearButton },
-            { name: "3Y", element: this.threeYearButton },
-            { name: "5Y", element: this.fiveYearButton },
-            { name: "MAX", element: this.maxButton }
-        ];
 
-        for (const period of periodButtons) {
+    // -----------------------------------------
+    // Graph Value
+    // -----------------------------------------
 
-            if (await period.element.isDisplayed()) {
+    const graphValue = this.maxReturnsValue;
 
-                console.log(`${period.name} displayed.`);
+    await graphValue.waitForDisplayed({
+        timeout: 30000
+    });
 
-            } else {
+    const value =
+        await graphValue.getAttribute("content-desc");
 
-                console.log(
-                    `${period.name} not available for this fund - skipping.`
-                );
-            }
+    // Check value exists
+    assert.ok(
+        value,
+        "Graph return value should be displayed"
+    );
+
+    // Check value format
+    assert.match(
+        value,
+        /^\d+(\.\d+)?%$/,
+        `Invalid graph return value: ${value}`
+    );
+
+    console.log(
+        `Graph return value displayed: ${value}`
+    );
+
+
+    // -----------------------------------------
+    // NIFTY
+    // -----------------------------------------
+
+    await this.niftyLabel.waitForDisplayed({
+        timeout: 30000
+    });
+
+    assert.ok(
+        await this.niftyLabel.isDisplayed(),
+        "Nifty option should be displayed"
+    );
+
+    console.log("Nifty option displayed.");
+
+
+    // -----------------------------------------
+    // Graph Period Buttons
+    // -----------------------------------------
+
+    const periodButtons = [
+        {
+            name: "1M",
+            element: this.oneMonthButton
+        },
+        {
+            name: "6M",
+            element: this.sixMonthButton
+        },
+        {
+            name: "1Y",
+            element: this.oneYearButton
+        },
+        {
+            name: "3Y",
+            element: this.threeYearButton
+        },
+        {
+            name: "5Y",
+            element: this.fiveYearButton
+        },
+        {
+            name: "MAX",
+            element: this.maxButton
         }
-        console.log("");
-        console.log("OVERVIEW VALIDATION PASSED");
+    ];
+
+    for (const period of periodButtons) {
+
+        if (await period.element.isDisplayed()) {
+
+            assert.ok(
+                await period.element.isDisplayed(),
+                `${period.name} should be displayed`
+            );
+
+            console.log(
+                `${period.name} displayed.`
+            );
+
+        } else {
+
+            console.log(
+                `${period.name} not available for this fund - skipping.`
+            );
+        }
     }
 
+
+    console.log("");
+    console.log("OVERVIEW VALIDATION PASSED");
+}
 
     // =========================================
     // VALIDATE NIFTY GRAPH
@@ -433,209 +503,303 @@ class FundDetailsPage {
     }
 
 
-    // =========================================
-    // VALIDATE ALL HOLDINGS
-    // =========================================
-    async validateHoldings() {
-        console.log("");
-        console.log("=================================");
-        console.log("VALIDATING HOLDINGS");
-        console.log("=================================");
+    // // =========================================
+// VALIDATE ALL HOLDINGS
+// =========================================
 
-        // -----------------------------------------
-        // Validate Holdings section
-        // -----------------------------------------
+async validateHoldings() {
 
-        await this.categoryBasedHoldings.waitForDisplayed({
-            timeout: 10000
-        });
+    console.log("");
 
-        console.log("Category Based Holdings displayed.");
+    console.log("=================================");
 
-        await this.equityTab.waitForDisplayed({
-            timeout: 10000
-        });
+    console.log("VALIDATING HOLDINGS");
 
-        console.log("Equity tab displayed.");
+    console.log("=================================");
 
-        await this.debtTab.waitForDisplayed({
-            timeout: 10000
-        });
 
-        console.log("Debt tab displayed.");
+    // -----------------------------------------
+    // Validate Holdings section
+    // -----------------------------------------
 
-        await this.othersTab.waitForDisplayed({
-            timeout: 10000
-        });
+    await this.categoryBasedHoldings.waitForDisplayed({
+        timeout: 10000
+    });
 
-        console.log("Others tab displayed.");
+    assert.ok(
+        await this.categoryBasedHoldings.isDisplayed(),
+        "Category Based Holdings should be displayed"
+    );
 
-        // -----------------------------------------
-        // Dynamically validate holdings
-        // -----------------------------------------
+    console.log("Category Based Holdings displayed.");
 
-        console.log("");
-        console.log("Validating holdings dynamically...");
 
-        const validatedHoldings = new Set();
+    await this.equityTab.waitForDisplayed({
+        timeout: 10000
+    });
 
-        let scrollAttempts = 0;
-        const maxScrollAttempts = 30;
+    assert.ok(
+        await this.equityTab.isDisplayed(),
+        "Equity tab should be displayed"
+    );
 
-        while (scrollAttempts < maxScrollAttempts) {
+    console.log("Equity tab displayed.");
 
-            const holdings = await this.holdings;
 
-            console.log("");
-            console.log(
-                `Visible holding elements: ${holdings.length}`
-            );
+    await this.debtTab.waitForDisplayed({
+        timeout: 10000
+    });
 
-            let newHoldingFound = false;
+    assert.ok(
+        await this.debtTab.isDisplayed(),
+        "Debt tab should be displayed"
+    );
 
-            // -----------------------------------------
-            // Validate currently visible holdings
-            // -----------------------------------------
+    console.log("Debt tab displayed.");
 
-            for (const holding of holdings) {
 
-                try {
-                    await holding.waitForDisplayed({
-                        timeout: 5000
-                    });
+    await this.othersTab.waitForDisplayed({
+        timeout: 10000
+    });
 
-                    const description =
-                        await holding.getAttribute("content-desc");
+    assert.ok(
+        await this.othersTab.isDisplayed(),
+        "Others tab should be displayed"
+    );
 
-                    if (!description) {
-                        continue;
-                    }
+    console.log("Others tab displayed.");
 
-                    const cleanDescription =
-                        description.trim();
 
-                    if (!validatedHoldings.has(cleanDescription)) {
+    // -----------------------------------------
+    // Dynamically validate holdings
+    // -----------------------------------------
 
-                        console.log("");
-                        console.log(
-                            "Holding:",
-                            cleanDescription.replace(/\n/g, " | ")
-                        );
+    console.log("");
 
-                        // Validate holding name + percentage
-                        const parts =
-                            cleanDescription.split("\n");
+    console.log("Validating holdings dynamically...");
 
-                        if (parts.length < 2) {
-                            throw new Error(
-                                `Invalid holding format: ${cleanDescription}`
-                            );
-                        }
+    const validatedHoldings = new Set();
 
-                        const holdingName =
-                            parts[0].trim();
+    let scrollAttempts = 0;
 
-                        const percentage =
-                            parts[1].trim();
+    const maxScrollAttempts = 30;
 
-                        if (!holdingName) {
-                            throw new Error(
-                                "Holding name is empty."
-                            );
-                        }
 
-                        if (!/^\d+(\.\d+)?%$/.test(percentage)) {
-                            throw new Error(
-                                `Invalid holding percentage: ${percentage}`
-                            );
-                        }
+    while (scrollAttempts < maxScrollAttempts) {
 
-                        validatedHoldings.add(
-                            cleanDescription
-                        );
-
-                        newHoldingFound = true;
-
-                        console.log(
-                            "Holding validation PASSED."
-                        );
-                    }
-
-                } catch (error) {
-
-                    throw new Error(
-                        `Holding validation failed: ${error.message}`
-                    );
-                }
-            }
-
-            console.log(
-                `Unique holdings validated so far: ${validatedHoldings.size}`
-            );
-
-            // -----------------------------------------
-            // Scroll to next batch
-            // -----------------------------------------
-
-            const canScroll =
-                await this.driver.execute(
-                    "mobile: scrollGesture",
-                    {
-                        left: 100,
-                        top: 1418,
-                        width: 880,
-                        height: 900,
-                        direction: "down",
-                        percent: 0.50
-                    }
-                );
-
-            await this.driver.pause(1000);
-
-            scrollAttempts++;
-
-            console.log(
-                "More holdings available:",
-                canScroll
-            );
-
-            // -----------------------------------------
-            // Stop conditions
-            // -----------------------------------------
-
-            if (!canScroll) {
-                console.log(
-                    "Reached end of Holdings list."
-                );
-                break;
-            }
-
-            if (!newHoldingFound) {
-                console.log(
-                    "No new holdings detected after scroll."
-                );
-                break;
-            }
-        }
-
-        // -----------------------------------------
-        // Final validation
-        // -----------------------------------------
-
-        if (validatedHoldings.size === 0) {
-            throw new Error(
-                "No valid holdings were found."
-            );
-        }
+        const holdings = await this.holdings;
 
         console.log("");
+
         console.log(
-            `Total unique holdings validated: ${validatedHoldings.size}`
+            `Visible holding elements: ${holdings.length}`
         );
 
-        console.log("");
-        console.log("HOLDINGS VALIDATION PASSED");
+        let newHoldingFound = false;
+
+
+        // -----------------------------------------
+        // Validate currently visible holdings
+        // -----------------------------------------
+
+        for (const holding of holdings) {
+
+            try {
+
+                await holding.waitForDisplayed({
+                    timeout: 5000
+                });
+
+                const description =
+                    await holding.getAttribute("content-desc");
+
+
+                // -----------------------------------------
+                // Content description validation
+                // -----------------------------------------
+
+                assert.ok(
+                    description,
+                    "Holding content description should not be empty"
+                );
+
+                const cleanDescription =
+                    description.trim();
+
+
+                // -----------------------------------------
+                // Skip duplicate holding
+                // -----------------------------------------
+
+                if (validatedHoldings.has(cleanDescription)) {
+                    continue;
+                }
+
+
+                console.log("");
+
+                console.log(
+                    "Holding:",
+                    cleanDescription.replace(/\n/g, " | ")
+                );
+
+
+                // -----------------------------------------
+                // Validate holding format
+                // -----------------------------------------
+
+                const parts =
+                    cleanDescription
+                        .split("\n")
+                        .map(part => part.trim())
+                        .filter(Boolean);
+
+
+                assert.ok(
+                    parts.length >= 2,
+                    `Invalid holding format: ${cleanDescription}`
+                );
+
+
+                const holdingName = parts[0];
+
+                const percentage = parts.find(
+                    part => /^\d+(\.\d+)?%$/.test(part)
+                );
+
+
+                // -----------------------------------------
+                // Validate holding name
+                // -----------------------------------------
+
+                assert.ok(
+                    holdingName,
+                    `Holding name should not be empty: ${cleanDescription}`
+                );
+
+
+                // -----------------------------------------
+                // Validate percentage
+                // -----------------------------------------
+
+                assert.ok(
+                    percentage,
+                    `Holding percentage should be displayed: ${cleanDescription}`
+                );
+
+                assert.match(
+                    percentage,
+                    /^\d+(\.\d+)?%$/,
+                    `Invalid holding percentage: ${percentage}`
+                );
+
+
+                // -----------------------------------------
+                // Add validated holding
+                // -----------------------------------------
+
+                validatedHoldings.add(
+                    cleanDescription
+                );
+
+                newHoldingFound = true;
+
+
+                console.log(
+                    "Holding validation PASSED."
+                );
+
+
+            } catch (error) {
+
+                throw new Error(
+                    `Holding validation failed: ${error.message}`
+                );
+            }
+        }
+
+
+        console.log(
+            `Unique holdings validated so far: ${validatedHoldings.size}`
+        );
+
+
+        // -----------------------------------------
+        // Scroll to next batch
+        // -----------------------------------------
+
+        const canScroll =
+            await this.driver.execute(
+                "mobile: scrollGesture",
+                {
+                    left: 100,
+                    top: 1418,
+                    width: 880,
+                    height: 900,
+                    direction: "down",
+                    percent: 0.50
+                }
+            );
+
+
+        await this.driver.pause(1000);
+
+        scrollAttempts++;
+
+
+        console.log(
+            "More holdings available:",
+            canScroll
+        );
+
+
+        // -----------------------------------------
+        // Stop conditions
+        // -----------------------------------------
+
+        if (!canScroll) {
+
+            console.log(
+                "Reached end of Holdings list."
+            );
+
+            break;
+        }
+
+
+        if (!newHoldingFound) {
+
+            console.log(
+                "No new holdings detected after scroll."
+            );
+
+            break;
+        }
     }
+
+
+    // -----------------------------------------
+    // Final validation
+    // -----------------------------------------
+
+    assert.ok(
+        validatedHoldings.size > 0,
+        "No valid holdings were found."
+    );
+
+
+    console.log("");
+
+    console.log(
+        `Total unique holdings validated: ${validatedHoldings.size}`
+    );
+
+    console.log("");
+
+    console.log(
+        "HOLDINGS VALIDATION PASSED"
+    );
+}
     // =========================================
     // CLICK SCHEME
     // =========================================
@@ -671,30 +835,64 @@ class FundDetailsPage {
         console.log("VALIDATING SCHEME");
         console.log("=================================");
 
+
+        // -----------------------------------------
+        // Fund Manager
+        // -----------------------------------------
+
         await this.fundManagerSection.waitForDisplayed({
-            timeout: 30000
+            timeout: 10000
         });
+
+        assert.ok(
+            await this.fundManagerSection.isDisplayed(),
+            "Fund Manager section should be displayed"
+        );
 
         console.log(
             "Fund Manager section displayed."
         );
 
-        await this.additionalInformationSection
-            .waitForDisplayed({
-                timeout: 30000
-            });
+
+        // -----------------------------------------
+        // Additional Information
+        // -----------------------------------------
+
+        await this.additionalInformationSection.waitForDisplayed({
+            timeout: 10000
+        });
+
+        assert.ok(
+            await this.additionalInformationSection.isDisplayed(),
+            "Additional Information section should be displayed"
+        );
 
         console.log(
             "Additional Information displayed."
         );
 
+
+        // -----------------------------------------
+        // Address
+        // -----------------------------------------
+
         await this.addressLabel.waitForDisplayed({
-            timeout: 30000
+            timeout: 10000
         });
+
+        assert.ok(
+            await this.addressLabel.isDisplayed(),
+            "Address should be displayed"
+        );
 
         console.log(
             "Address displayed."
         );
+
+
+        // -----------------------------------------
+        // Final validation
+        // -----------------------------------------
 
         console.log("");
         console.log("SCHEME VALIDATION PASSED");

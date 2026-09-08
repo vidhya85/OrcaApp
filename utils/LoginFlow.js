@@ -1,4 +1,10 @@
-require("dotenv").config();
+
+const path = require("path");
+const dotenv = require("dotenv");
+
+dotenv.config({
+    path: path.resolve(__dirname, "../.env")
+});
 
 const LoginPage = require("../pages/LoginPage");
 const OtpPage = require("../pages/OtpPage");
@@ -8,10 +14,9 @@ const DashboardPage = require("../pages/DashboardPage");
 
 class LoginFlow {
 
-    constructor(driver, testData) {
+    constructor(driver) {
 
         this.driver = driver;
-        this.testData = testData;
 
         this.loginPage = new LoginPage(driver);
         this.otpPage = new OtpPage(driver);
@@ -26,7 +31,10 @@ class LoginFlow {
 
     async ensureLoggedIn(permissionHandler) {
 
-        // Check whether user is already logged in
+        // =========================================
+        // Check Existing Session
+        // =========================================
+
         const alreadyLoggedIn =
             await this.dashboardPage.isDisplayed();
 
@@ -110,6 +118,8 @@ class LoginFlow {
         await this.loginPage.waitForTPINScreen();
 
 
+        console.log("Entering TPIN...");
+
         await this.loginPage.enterTPIN(
             process.env.TPIN
         );
@@ -118,9 +128,6 @@ class LoginFlow {
         // =========================================
         // Secure Login
         // =========================================
-        // ORCA automatically processes Secure Login
-        // after the complete TPIN is entered.
-        // No automation click is required here.
 
         console.log("");
         console.log("Waiting for ORCA to process login...");
@@ -147,9 +154,9 @@ class LoginFlow {
 
         } catch (error) {
 
-            console.log("Risk Disclosure not displayed.");
-
-            console.log("Continuing to Dashboard...");
+            console.log(
+                "Risk Disclosure not displayed. Continuing..."
+            );
         }
 
 
@@ -157,14 +164,38 @@ class LoginFlow {
         // Dashboard
         // =========================================
 
+        await this.waitForDashboard();
+
+        console.log("");
+        console.log("Login flow completed.");
+    }
+
+
+    // =========================================
+    // Wait For Dashboard
+    // =========================================
+
+    async waitForDashboard() {
+
         console.log("");
         console.log("Waiting for Dashboard...");
 
-        await this.dashboardPage.isDisplayed();
+        const dashboardDisplayed =
+            await this.dashboardPage.isDisplayed();
 
-        console.log("Login flow completed.");
+
+        if (!dashboardDisplayed) {
+
+            throw new Error(
+                "Dashboard was not displayed after login."
+            );
+        }
+
+
+        console.log("Dashboard displayed successfully.");
     }
 }
 
 
 module.exports = LoginFlow;
+

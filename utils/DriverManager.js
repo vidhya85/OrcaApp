@@ -1,45 +1,38 @@
 const { remote } = require("webdriverio");
 
-const APP_PACKAGE = "com.enrich.enrichkyc";
-const APP_ACTIVITY = "com.enrich.enrichkyc.MainActivity";
+const appConfig = require("../config/appConfig.js");
+
+const APP_PACKAGE =
+    appConfig.capabilities["appium:appPackage"];
+
+
+// =========================================
+// CREATE APPIUM DRIVER
+// =========================================
 
 async function createDriver() {
 
+    console.log("");
+    console.log("Creating Appium session...");
+
     const driver = await remote({
 
-        hostname: "127.0.0.1",
-        port: 4723,
-        path: "/",
+        ...appConfig,
 
-        logLevel: "error",
-
-        capabilities: {
-
-            platformName: "Android",
-
-            "appium:automationName":
-                "UiAutomator2",
-
-            "appium:deviceName":
-                "emulator-5554",
-
-            "appium:udid":
-                "emulator-5554",
-
-            "appium:appPackage":
-                APP_PACKAGE,
-
-            "appium:appActivity":
-                APP_ACTIVITY,
-
-            // Keep login/session data
-            "appium:noReset": true
-        }
+        logLevel: "error"
     });
+
+    console.log(
+        "Appium session created."
+    );
 
     return driver;
 }
 
+
+// =========================================
+// LAUNCH ORCA APP
+// =========================================
 
 async function launchApp(driver) {
 
@@ -53,11 +46,20 @@ async function launchApp(driver) {
 }
 
 
+// =========================================
+// CLOSE APPIUM DRIVER
+// =========================================
+
 async function closeDriver(driver) {
 
     if (!driver) {
         return;
     }
+
+
+    // -----------------------------------------
+    // Close Orca App
+    // -----------------------------------------
 
     try {
 
@@ -80,6 +82,10 @@ async function closeDriver(driver) {
     }
 
 
+    // -----------------------------------------
+    // Close Appium Session
+    // -----------------------------------------
+
     try {
 
         await driver.deleteSession();
@@ -96,6 +102,10 @@ async function closeDriver(driver) {
     }
 }
 
+
+// =========================================
+// EXPORT DRIVER FUNCTIONS
+// =========================================
 
 module.exports = {
     createDriver,

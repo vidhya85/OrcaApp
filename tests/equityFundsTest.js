@@ -6,6 +6,8 @@ const FundDetailsPage = require("../pages/FundDetailsPage");
 const ScreenshotUtils = require("../utils/ScreenshotUtils");
 const TestReport = require("../utils/TestReport");
 
+
+
 const {
     createDriver,
     launchApp,
@@ -306,8 +308,9 @@ async function main() {
         );
 
         testReport.markPassed();
-
         testReport.saveReport();
+        testReport.saveHtmlReport();
+
 
         console.log("");
         console.log("=================================");
@@ -316,75 +319,103 @@ async function main() {
 
     } catch (error) {
 
-    console.error("");
-    console.error("=================================");
-    console.error("EQUITY FUNDS TEST FAILED");
-    console.error("=================================");
-
-    console.error(
-        "Fund:",
-        currentFund
-    );
-
-    console.error(
-        "Section:",
-        currentSection
-    );
-
-    console.error(
-        "Error:",
-        error.message
-    );
-
-    console.error(
-        error.stack
-    );
-
-
-    // -----------------------------------------
-    // Add Failure To Test Report
-    // -----------------------------------------
-
-    testReport.addFailedFund(
-        currentFund,
-        currentSection,
-        error.message
-    );
-
-    testReport.markFailed();
-
-    testReport.saveReport();
-
-
-    // -----------------------------------------
-    // Capture Failure Screenshot
-    // -----------------------------------------
-
-    try {
-
-        const screenshotName =
-            `${currentFund}_${currentSection}_Failure`;
-
-        await ScreenshotUtils.capture(
-            driver,
-            screenshotName
-        );
-
-    } catch (screenshotError) {
+        console.error("");
+        console.error("=================================");
+        console.error("EQUITY FUNDS TEST FAILED");
+        console.error("=================================");
 
         console.error(
-            "Failed to capture screenshot:",
-            screenshotError.message
+            "Fund:",
+            currentFund
         );
+
+        console.error(
+            "Section:",
+            currentSection
+        );
+
+        console.error(
+            "Error:",
+            error.message
+        );
+
+        console.error(
+            error.stack
+        );
+
+
+        // -----------------------------------------
+        // Add Failure To Test Report
+        // -----------------------------------------
+
+        try {
+
+            testReport.addFailedFund(
+                currentFund,
+                currentSection,
+                error.message
+            );
+
+            testReport.markFailed();
+            testReport.saveReport();
+            testReport.saveHtmlReport();
+
+        } catch (reportError) {
+
+            console.error(
+                "Failed to generate test report:",
+                reportError.message
+            );
+        }
+
+
+        // -----------------------------------------
+        // Capture Failure Screenshot
+        // -----------------------------------------
+
+        try {
+
+            const screenshotName =
+                `${currentFund}_${currentSection}_Failure`;
+
+            await ScreenshotUtils.capture(
+                driver,
+                screenshotName
+            );
+
+        } catch (screenshotError) {
+
+            console.error(
+                "Failed to capture screenshot:",
+                screenshotError.message
+            );
+        }
+
+
+        // -----------------------------------------
+        // Re-throw Original Test Failure
+        // -----------------------------------------
+
+        throw error;
+
+    } finally {
+
+        // -----------------------------------------
+        // Safe Appium Session Cleanup
+        // -----------------------------------------
+
+        try {
+
+            await closeDriver(driver);
+
+        } catch (closeError) {
+
+            console.error(
+                "Failed to close Appium session:",
+                closeError.message
+            );
+        }
     }
-
-    throw error;
-
-} finally {
-
-    await closeDriver(driver);
-
-}
 }
 
 

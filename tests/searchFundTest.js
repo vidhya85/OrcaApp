@@ -1,9 +1,11 @@
 const FundsPage = require("../pages/FundsPage");
-const FundDetailsPage = require("../pages/FundDetailsPage");
-
 const testData = require("../config/testData");
 const PermissionHandler = require("../utils/PermissionHandler");
 const LoginFlow = require("../utils/LoginFlow");
+const FundDetailsPage = require("../pages/FundDetailsPage");
+const ScreenshotUtils = require("../utils/ScreenshotUtils");
+const TestReport = require("../utils/TestReport");
+
 
 const {
     createDriver,
@@ -20,14 +22,18 @@ async function main() {
 
     const driver = await createDriver();
 
+    const testReport =
+        new TestReport("Search Fund Test");
+
+    let currentFund = "Unknown";
+    let currentSection = "Unknown";
+
 
     try {
 
         // =========================================
-        // Launch Orca App
+        // Test Start
         // =========================================
-
-        await launchApp(driver);
 
         console.log("=================================");
         console.log("SEARCH FUND TEST STARTED");
@@ -35,11 +41,21 @@ async function main() {
 
 
         // =========================================
-        // Create Page Objects / Utilities
+        // Launch ORCA App
+        // =========================================
+
+        await launchApp(driver);
+
+
+        // =========================================
+        // Initialize Page Objects
         // =========================================
 
         const permissionHandler =
             new PermissionHandler(driver);
+
+        const loginFlow =
+            new LoginFlow(driver, testData);
 
         const fundsPage =
             new FundsPage(driver);
@@ -47,45 +63,23 @@ async function main() {
         const fundDetailsPage =
             new FundDetailsPage(driver);
 
-        const loginFlow =
-            new LoginFlow(
-                driver,
-                testData
-            );
-
 
         // =========================================
-        // Handle Notification Permission
+        // Login / Session
         // =========================================
 
-        await permissionHandler
-            .handleNotificationPermission();
+        currentSection = "Login";
 
-        // =========================================
-        // Handle Google Phone Number Chooser
-        // =========================================
-
-        await permissionHandler
-            .handlePhoneNumberChooser();
-
-
-        // =========================================
-        // Login / Already Logged In
-        // =========================================
-
-        await loginFlow.ensureLoggedIn();
-
-
-        // =========================================
-        // Validate Dashboard
-        // =========================================
-
-        await loginFlow.validateDashboard();
+        await loginFlow.ensureLoggedIn(
+            permissionHandler
+        );
 
 
         // =========================================
         // Open Mutual Funds
         // =========================================
+
+        currentSection = "Mutual Funds";
 
         console.log("");
         console.log("Opening Mutual Funds...");
@@ -97,6 +91,8 @@ async function main() {
         // Open Fund Search
         // =========================================
 
+        currentSection = "Fund Search";
+
         console.log("");
         console.log("Opening Fund Search...");
 
@@ -106,6 +102,8 @@ async function main() {
         // =========================================
         // Search Fund
         // =========================================
+
+        currentSection = "Search";
 
         console.log("");
         console.log(
@@ -118,22 +116,24 @@ async function main() {
 
 
         // =========================================
-        // Click First Matching Fund
+        // Open First Matching Fund
         // =========================================
+
+        currentSection = "Fund Selection";
 
         console.log("");
         console.log(
             "Clicking first matching fund..."
         );
 
-        await fundsPage.clickFirstVisibleFund(
-            testData.fundSearchKeyword
-        );
+        currentFund = await fundsPage.clickFirstVisibleFund();
 
 
         // =========================================
         // Validate Fund Details
         // =========================================
+
+        currentSection = "Fund Details";
 
         console.log("");
         console.log(
@@ -141,11 +141,23 @@ async function main() {
         );
 
         await fundDetailsPage.validateAllTabs();
+        testReport.addPassedFund(currentFund);
 
 
         // =========================================
-        // TEST PASSED
+        // Test Passed
         // =========================================
+
+        console.log("");
+        console.log("=================================");
+        console.log("SEARCH FUND VALIDATION COMPLETED");
+        console.log("=================================");
+
+
+        testReport.markPassed();
+        testReport.saveReport();
+        testReport.saveHtmlReport();
+
 
         console.log("");
         console.log("=================================");
@@ -156,7 +168,7 @@ async function main() {
 
 
     // =========================================
-    // TEST FAILED
+    // Test Failed
     // =========================================
 
     catch (error) {
@@ -166,21 +178,110 @@ async function main() {
         console.error("SEARCH FUND TEST FAILED");
         console.error("=================================");
 
-        console.error(error);
+
+        console.error(
+            "Fund:",
+            currentFund
+        );
+
+
+        console.error(
+            "Section:",
+            currentSection
+        );
+
+
+        console.error(
+            "Error:",
+            error.message
+        );
+
+
+        console.error(
+            error.stack
+        );
+
+
+        // =========================================
+        // Add Failure To Test Report
+        // =========================================
+
+        try {
+
+            testReport.addFailedFund(
+                currentFund,
+                currentSection,
+                error.message
+            );
+
+
+            testReport.markFailed();
+
+            testReport.saveReport();
+            testReport.saveHtmlReport();
+
+        } catch (reportError) {
+
+            console.error(
+                "Failed to generate test report:",
+                reportError.message
+            );
+        }
+
+
+        // =========================================
+        // Capture Failure Screenshot
+        // =========================================
+
+        try {
+
+            const screenshotName =
+                `${currentFund}_${currentSection}_Failure`;
+
+
+            await ScreenshotUtils.capture(
+                driver,
+                screenshotName
+            );
+
+        } catch (screenshotError) {
+
+            console.error(
+                "Failed to capture screenshot:",
+                screenshotError.message
+            );
+        }
+
+
+        // =========================================
+        // Re-throw Original Test Failure
+        // =========================================
+
+        throw error;
 
     }
 
 
     // =========================================
-    // CLEANUP
+    // Cleanup
     // =========================================
 
     finally {
 
-        await closeDriver(driver);
+        try {
 
+            await closeDriver(driver);
+
+        } catch (closeError) {
+
+            console.error(
+                "Failed to close Appium session:",
+                closeError.message
+            );
+        }
     }
 }
 
 
 main();
+
