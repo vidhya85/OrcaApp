@@ -54,29 +54,32 @@ class OtpPage {
             timeout: 30000
         });
 
-        console.log("OTP field found");
-        console.log("Waiting for manual OTP entry...");
-
-        /*
-         * OTP is entered manually.
-         *
-         * ORCA automatically moves to the TPIN
-         * screen after successful OTP verification.
-         *
-         * Therefore we do NOT read the OTP text
-         * attribute and we do NOT wait for the
-         * OTP field to disappear.
-         *
-         * LoginFlow will verify the TPIN screen
-         * immediately after this method.
-         */
-
-        await this.driver.pause(5000);
-
-        console.log(
-            "OTP entry wait completed."
-        );
+        console.log("OTP field found.");
     }
+
+
+    // =========================================
+    // ENTER OTP
+    // =========================================
+
+    async enterOtp(otp) {
+
+        console.log("Entering OTP...");
+        console.log("OTP received:", otp);
+
+        await this.otpField.waitForDisplayed({
+            timeout: 30000
+        });
+
+        await this.otpField.click();
+
+        await this.otpField.clearValue();
+
+        await this.otpField.setValue(otp);
+
+        console.log("OTP entered successfully.");
+    }
+    
 }
 
 

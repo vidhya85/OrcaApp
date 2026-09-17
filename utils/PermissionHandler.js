@@ -11,6 +11,13 @@ class PermissionHandler {
 
     async handleNotificationPermission() {
 
+        console.log("Checking for phone number chooser...");
+
+    await this.driver.pause(2000);
+
+    console.log("Current screen:");
+    console.log(await this.driver.getPageSource())
+
         await this.driver.pause(3000);
 
         const allowButton = await this.driver.$(

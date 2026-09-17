@@ -1,4 +1,3 @@
-
 const path = require("path");
 const dotenv = require("dotenv");
 
@@ -8,8 +7,10 @@ dotenv.config({
 
 const LoginPage = require("../pages/LoginPage");
 const OtpPage = require("../pages/OtpPage");
+const WelcomePage = require("../pages/WelcomePage");
 const RiskDisclosurePage = require("../pages/RiskDisclosurePage");
 const DashboardPage = require("../pages/DashboardPage");
+const OTPService = require("../utils/OTPService");
 
 
 class LoginFlow {
@@ -20,6 +21,7 @@ class LoginFlow {
 
         this.loginPage = new LoginPage(driver);
         this.otpPage = new OtpPage(driver);
+        this.welcomePage = new WelcomePage(driver);
         this.riskDisclosurePage = new RiskDisclosurePage(driver);
         this.dashboardPage = new DashboardPage(driver);
     }
@@ -74,6 +76,65 @@ class LoginFlow {
             console.log("Handling app permissions...");
 
             await permissionHandler.handleNotificationPermission();
+        }
+
+
+        // =========================================
+        // Determine Login Type
+        // =========================================
+
+        let freshLogin = false;
+
+        try {
+
+            await this.welcomePage.letsEnrichButton.waitForExist({
+                timeout: 10000
+            });
+
+            freshLogin = true;
+
+            console.log("");
+            console.log("Fresh login screen detected.");
+            console.log("Let's Enrich button is displayed.");
+
+        } catch (error) {
+
+            console.log("");
+            console.log("Let's Enrich screen not detected.");
+            console.log("Assuming session-expiry login.");
+
+        }
+
+
+        // =========================================
+        // Fresh Login Only
+        // =========================================
+
+        if (freshLogin) {
+
+            // =========================================
+            // Let's Enrich
+            // =========================================
+
+            console.log("");
+            console.log("Clicking Let's Enrich...");
+
+            await this.welcomePage.clickLetsEnrich();
+
+            console.log("Let's Enrich clicked.");
+
+            await this.driver.pause(2000);
+        }
+
+
+        // =========================================
+        // Phone Number Chooser
+        // =========================================
+
+        if (permissionHandler) {
+
+            console.log("");
+            console.log("Checking for phone number chooser...");
 
             await permissionHandler.handlePhoneNumberChooser();
         }
@@ -91,21 +152,77 @@ class LoginFlow {
         );
 
 
-        console.log("Clicking Send OTP...");
-
-        await this.loginPage.clickSendOtp();
-
-
         // =========================================
         // OTP
         // =========================================
 
         console.log("");
-        console.log("Waiting for OTP...");
+        console.log("Preparing for OTP...");
+
+        // Record the time BEFORE requesting the OTP.
+        // This allows us to ignore the previous OTP.
+
+        const otpRequestTime = new Date();
+
+        console.log(
+            "OTP request time:",
+            otpRequestTime.toISOString()
+        );
+
+
+        // =========================================
+        // Send OTP
+        // =========================================
+
+        console.log("");
+        console.log("Clicking Send OTP...");
+
+        await this.loginPage.clickSendOtp();
+
+        console.log("Send OTP click completed.");
+
+
+        // =========================================
+        // Wait For OTP Screen
+        // =========================================
+
+        console.log("");
+        console.log("Waiting for OTP screen...");
 
         await this.otpPage.waitForOtpEntry();
 
-        console.log("OTP entry wait completed.");
+        console.log("OTP screen displayed.");
+
+
+        // =========================================
+        // Retrieve NEW OTP From PostgreSQL
+        // =========================================
+
+        console.log("");
+        console.log("Waiting for new OTP from PostgreSQL...");
+
+        const otp =
+            await OTPService.getLatestOTP(
+                "AJ002281",
+                otpRequestTime
+            );
+
+        console.log("New OTP retrieved successfully.");
+
+
+        // =========================================
+        // Enter OTP
+        // =========================================
+
+        await this.otpPage.enterOtp(otp);
+
+
+        // =========================================
+        // OTP Verification
+        // =========================================
+
+        console.log("");
+        console.log("OTP verification submitted.");
 
 
         // =========================================
@@ -198,4 +315,3 @@ class LoginFlow {
 
 
 module.exports = LoginFlow;
-

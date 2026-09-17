@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/equityFundsTest.js"
+    "test:all": "for test in tests/*.js; do echo \"Running $test\"; node \"$test\"; done"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +12,7 @@
   "type": "commonjs",
   "dependencies": {
     "dotenv": "^17.4.2",
+    "pg": "^8.23.0",
     "webdriverio": "^9.30.1"
   },
   "devDependencies": {
