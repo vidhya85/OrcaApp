@@ -34,6 +34,68 @@ class LoginFlow {
     async ensureLoggedIn(permissionHandler) {
 
         // =========================================
+        // Environment
+        // =========================================
+
+        const environment =
+            (process.env.ENV || "PROD").toUpperCase();
+
+        console.log("");
+        console.log("=================================");
+        console.log("TEST ENVIRONMENT:", environment);
+        console.log("=================================");
+
+
+        // =========================================
+        // Environment-Specific Login Data
+        // =========================================
+
+        const loginData = {
+
+            userId:
+                environment === "UAT"
+                    ? process.env.UAT_USER_ID
+                    : process.env.PROD_USER_ID,
+
+            mobileNumber:
+                environment === "UAT"
+                    ? process.env.UAT_MOBILE_NUMBER
+                    : process.env.PROD_MOBILE_NUMBER,
+
+            tpin:
+                environment === "UAT"
+                    ? process.env.UAT_TPIN
+                    : process.env.PROD_TPIN
+        };
+
+
+        // =========================================
+        // Validate Login Configuration
+        // =========================================
+
+        if (!loginData.userId) {
+            throw new Error(
+                `${environment}_USER_ID is not configured in .env`
+            );
+        }
+
+        if (!loginData.mobileNumber) {
+            throw new Error(
+                `${environment}_MOBILE_NUMBER is not configured in .env`
+            );
+        }
+
+        if (!loginData.tpin) {
+            throw new Error(
+                `${environment}_TPIN is not configured in .env`
+            );
+        }
+
+        console.log("Login configuration loaded.");
+        console.log("OTP User ID:", loginData.userId);
+
+
+        // =========================================
         // Check Existing Session
         // =========================================
 
@@ -102,7 +164,6 @@ class LoginFlow {
             console.log("");
             console.log("Let's Enrich screen not detected.");
             console.log("Assuming session-expiry login.");
-
         }
 
 
@@ -111,10 +172,6 @@ class LoginFlow {
         // =========================================
 
         if (freshLogin) {
-
-            // =========================================
-            // Let's Enrich
-            // =========================================
 
             console.log("");
             console.log("Clicking Let's Enrich...");
@@ -148,7 +205,7 @@ class LoginFlow {
         console.log("Entering mobile number...");
 
         await this.loginPage.enterMobileNumber(
-            process.env.MOBILE_NUMBER
+            loginData.mobileNumber
         );
 
 
@@ -203,7 +260,7 @@ class LoginFlow {
 
         const otp =
             await OTPService.getLatestOTP(
-                "AJ002281",
+                loginData.userId,
                 otpRequestTime
             );
 
@@ -238,7 +295,7 @@ class LoginFlow {
         console.log("Entering TPIN...");
 
         await this.loginPage.enterTPIN(
-            process.env.TPIN
+            loginData.tpin
         );
 
 

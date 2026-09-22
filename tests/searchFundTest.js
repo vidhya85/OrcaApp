@@ -141,6 +141,7 @@ async function main() {
         );
 
         await fundDetailsPage.validateAllTabs();
+        await fundDetailsPage.selectInvestmentType("ONE_TIME");
         testReport.addPassedFund(currentFund);
 
 

@@ -1,13 +1,14 @@
 const fs = require("fs");
 const path = require("path");
+const projectRoot = path.join(__dirname, "..");
 
 class ScreenshotUtils {
 
     static ensureDirectory() {
 
         const screenshotDir =
-            path.join(process.cwd(), "screenshots");
-
+            path.join(projectRoot, "screenshots");
+            
         if (!fs.existsSync(screenshotDir)) {
             fs.mkdirSync(screenshotDir, {
                 recursive: true

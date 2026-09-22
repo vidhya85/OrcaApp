@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const projectRoot = path.join(__dirname, "..");
 
 class TestReport {
 
@@ -132,7 +133,7 @@ class TestReport {
 
         const reportDirectory =
             path.join(
-                process.cwd(),
+                projectRoot,
                 "reports"
             );
 
@@ -192,10 +193,9 @@ class TestReport {
 
         const reportDirectory =
             path.join(
-                process.cwd(),
+                projectRoot,
                 "reports"
             );
-
 
         if (!fs.existsSync(reportDirectory)) {
 

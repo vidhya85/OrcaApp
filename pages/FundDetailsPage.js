@@ -58,6 +58,50 @@ class FundDetailsPage {
         );
     }
 
+    // =========================================
+    // INVESTMENT OPTIONS
+    // =========================================
+
+    get oneTimeInvestment() {
+        return this.driver.$(
+            'android=new UiSelector().descriptionContains("in One-time")'
+        );
+    }
+
+    get sipInvestment() {
+        return this.driver.$(
+            'android=new UiSelector().descriptionContains("in SIP")'
+        );
+    }
+
+    async selectInvestmentType(type) {
+
+        let investmentOption;
+
+        if (type === "ONE_TIME") {
+            investmentOption = this.oneTimeInvestment;
+        } else if (type === "SIP") {
+            investmentOption = this.sipInvestment;
+        } else {
+            throw new Error(
+                `Unsupported investment type: ${type}`
+            );
+        }
+
+        await investmentOption.waitForDisplayed({
+            timeout: 10000
+        });
+
+        const description =
+            await investmentOption.getAttribute("content-desc");
+
+        console.log("Investment option:", description);
+
+        await investmentOption.click();
+
+        console.log(`${type} investment selected.`);
+    }
+
     // Graph related elements
 
     get maxReturnsLabel() {
@@ -306,7 +350,7 @@ async validateOverview() {
     // Check value format
     assert.match(
         value,
-        /^\d+(\.\d+)?%$/,
+        /^-?\d+(\.\d+)?%$/,
         `Invalid graph return value: ${value}`
     );
 
@@ -466,7 +510,7 @@ async validateOverview() {
 
         assert.match(
             value,
-            /^\d+(\.\d+)?%$/,
+            /^-?\d+(\.\d+)?%$/,
             `Invalid graph value after Nifty selection: ${value}`
         );
 

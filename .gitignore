@@ -28,3 +28,6 @@ temp/
 
 # Appium / automation generated files
 run/
+
+# Application builds
+apps/
