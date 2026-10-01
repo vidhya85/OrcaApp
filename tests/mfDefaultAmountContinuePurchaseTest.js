@@ -1,7 +1,7 @@
 const FundsPage = require("../pages/FundsPage");
 const testData = require("../config/testData");
 const PermissionHandler = require("../utils/PermissionHandler");
-const LoginFlow = require("../utils/LoginFlow");
+const UserLoginFlow = require("../utils/UserLoginFlow");
 const ScreenshotUtils = require("../utils/ScreenshotUtils");
 const TestReport = require("../utils/TestReport");
 const FundDetailsPage = require("../pages/FundDetailsPage");
@@ -55,9 +55,9 @@ async function main() {
         const permissionHandler =
             new PermissionHandler(driver);
 
-        const loginFlow =
-            new LoginFlow(driver, testData);
-
+        const userLoginFlow =
+            new UserLoginFlow(driver);
+            
         const fundsPage =
             new FundsPage(driver);
 
@@ -73,10 +73,9 @@ async function main() {
 
         currentSection = "Login";
 
-        await loginFlow.ensureLoggedIn(
+        await userLoginFlow.login(
             permissionHandler
         );
-
 
         // =========================================
         // Open Mutual Funds

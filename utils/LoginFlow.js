@@ -22,8 +22,10 @@ class LoginFlow {
         this.loginPage = new LoginPage(driver);
         this.otpPage = new OtpPage(driver);
         this.welcomePage = new WelcomePage(driver);
-        this.riskDisclosurePage = new RiskDisclosurePage(driver);
-        this.dashboardPage = new DashboardPage(driver);
+        this.riskDisclosurePage =
+            new RiskDisclosurePage(driver);
+        this.dashboardPage =
+            new DashboardPage(driver);
     }
 
 
@@ -42,7 +44,10 @@ class LoginFlow {
 
         console.log("");
         console.log("=================================");
-        console.log("TEST ENVIRONMENT:", environment);
+        console.log(
+            "TEST ENVIRONMENT:",
+            environment
+        );
         console.log("=================================");
 
 
@@ -74,25 +79,35 @@ class LoginFlow {
         // =========================================
 
         if (!loginData.userId) {
+
             throw new Error(
                 `${environment}_USER_ID is not configured in .env`
             );
         }
 
         if (!loginData.mobileNumber) {
+
             throw new Error(
                 `${environment}_MOBILE_NUMBER is not configured in .env`
             );
         }
 
         if (!loginData.tpin) {
+
             throw new Error(
                 `${environment}_TPIN is not configured in .env`
             );
         }
 
-        console.log("Login configuration loaded.");
-        console.log("OTP User ID:", loginData.userId);
+
+        console.log(
+            "Login configuration loaded."
+        );
+
+        console.log(
+            "OTP User ID:",
+            loginData.userId
+        );
 
 
         // =========================================
@@ -100,7 +115,7 @@ class LoginFlow {
         // =========================================
 
         const alreadyLoggedIn =
-            await this.dashboardPage.isDisplayed();
+            await this.checkExistingSession();
 
 
         if (alreadyLoggedIn) {
@@ -109,7 +124,9 @@ class LoginFlow {
             console.log("=================================");
             console.log("USER ALREADY LOGGED IN");
             console.log("Dashboard detected.");
-            console.log("Skipping permissions and login.");
+            console.log(
+                "Skipping permissions and login."
+            );
             console.log("=================================");
 
             return;
@@ -135,9 +152,12 @@ class LoginFlow {
         if (permissionHandler) {
 
             console.log("");
-            console.log("Handling app permissions...");
+            console.log(
+                "Handling app permissions..."
+            );
 
-            await permissionHandler.handleNotificationPermission();
+            await permissionHandler
+                .handleNotificationPermission();
         }
 
 
@@ -149,21 +169,33 @@ class LoginFlow {
 
         try {
 
-            await this.welcomePage.letsEnrichButton.waitForExist({
-                timeout: 10000
-            });
+            await this.welcomePage
+                .letsEnrichButton
+                .waitForExist({
+                    timeout: 10000
+                });
 
             freshLogin = true;
 
             console.log("");
-            console.log("Fresh login screen detected.");
-            console.log("Let's Enrich button is displayed.");
+            console.log(
+                "Fresh login screen detected."
+            );
+
+            console.log(
+                "Let's Enrich button is displayed."
+            );
 
         } catch (error) {
 
             console.log("");
-            console.log("Let's Enrich screen not detected.");
-            console.log("Assuming session-expiry login.");
+            console.log(
+                "Let's Enrich screen not detected."
+            );
+
+            console.log(
+                "Assuming session-expiry login."
+            );
         }
 
 
@@ -174,11 +206,16 @@ class LoginFlow {
         if (freshLogin) {
 
             console.log("");
-            console.log("Clicking Let's Enrich...");
+            console.log(
+                "Clicking Let's Enrich..."
+            );
 
-            await this.welcomePage.clickLetsEnrich();
+            await this.welcomePage
+                .clickLetsEnrich();
 
-            console.log("Let's Enrich clicked.");
+            console.log(
+                "Let's Enrich clicked."
+            );
 
             await this.driver.pause(2000);
         }
@@ -191,9 +228,12 @@ class LoginFlow {
         if (permissionHandler) {
 
             console.log("");
-            console.log("Checking for phone number chooser...");
+            console.log(
+                "Checking for phone number chooser..."
+            );
 
-            await permissionHandler.handlePhoneNumberChooser();
+            await permissionHandler
+                .handlePhoneNumberChooser();
         }
 
 
@@ -202,11 +242,14 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Entering mobile number...");
-
-        await this.loginPage.enterMobileNumber(
-            loginData.mobileNumber
+        console.log(
+            "Entering mobile number..."
         );
+
+        await this.loginPage
+            .enterMobileNumber(
+                loginData.mobileNumber
+            );
 
 
         // =========================================
@@ -214,12 +257,16 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Preparing for OTP...");
+        console.log(
+            "Preparing for OTP..."
+        );
 
-        // Record the time BEFORE requesting the OTP.
+
+        // Record the time BEFORE requesting OTP.
         // This allows us to ignore the previous OTP.
 
-        const otpRequestTime = new Date();
+        const otpRequestTime =
+            new Date();
 
         console.log(
             "OTP request time:",
@@ -232,11 +279,16 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Clicking Send OTP...");
+        console.log(
+            "Clicking Send OTP..."
+        );
 
-        await this.loginPage.clickSendOtp();
+        await this.loginPage
+            .clickSendOtp();
 
-        console.log("Send OTP click completed.");
+        console.log(
+            "Send OTP click completed."
+        );
 
 
         // =========================================
@@ -244,11 +296,16 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Waiting for OTP screen...");
+        console.log(
+            "Waiting for OTP screen..."
+        );
 
-        await this.otpPage.waitForOtpEntry();
+        await this.otpPage
+            .waitForOtpEntry();
 
-        console.log("OTP screen displayed.");
+        console.log(
+            "OTP screen displayed."
+        );
 
 
         // =========================================
@@ -256,7 +313,9 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Waiting for new OTP from PostgreSQL...");
+        console.log(
+            "Waiting for new OTP from PostgreSQL..."
+        );
 
         const otp =
             await OTPService.getLatestOTP(
@@ -264,14 +323,17 @@ class LoginFlow {
                 otpRequestTime
             );
 
-        console.log("New OTP retrieved successfully.");
+        console.log(
+            "New OTP retrieved successfully."
+        );
 
 
         // =========================================
         // Enter OTP
         // =========================================
 
-        await this.otpPage.enterOtp(otp);
+        await this.otpPage
+            .enterOtp(otp);
 
 
         // =========================================
@@ -279,7 +341,9 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("OTP verification submitted.");
+        console.log(
+            "OTP verification submitted."
+        );
 
 
         // =========================================
@@ -287,16 +351,21 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Waiting for TPIN screen...");
-
-        await this.loginPage.waitForTPINScreen();
-
-
-        console.log("Entering TPIN...");
-
-        await this.loginPage.enterTPIN(
-            loginData.tpin
+        console.log(
+            "Waiting for TPIN screen..."
         );
+
+        await this.loginPage
+            .waitForTPINScreen();
+
+        console.log(
+            "Entering TPIN..."
+        );
+
+        await this.loginPage
+            .enterTPIN(
+                loginData.tpin
+            );
 
 
         // =========================================
@@ -304,7 +373,9 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Waiting for ORCA to process login...");
+        console.log(
+            "Waiting for ORCA to process login..."
+        );
 
 
         // =========================================
@@ -312,19 +383,28 @@ class LoginFlow {
         // =========================================
 
         console.log("");
-        console.log("Checking for Risk Disclosure...");
+        console.log(
+            "Checking for Risk Disclosure..."
+        );
 
         try {
 
-            await this.riskDisclosurePage.understandButton.waitForDisplayed({
-                timeout: 10000
-            });
+            await this.riskDisclosurePage
+                .understandButton
+                .waitForDisplayed({
+                    timeout: 10000
+                });
 
-            console.log("Risk Disclosure detected.");
+            console.log(
+                "Risk Disclosure detected."
+            );
 
-            console.log("Clicking I Understand...");
+            console.log(
+                "Clicking I Understand..."
+            );
 
-            await this.riskDisclosurePage.clickIUnderstand();
+            await this.riskDisclosurePage
+                .clickIUnderstand();
 
         } catch (error) {
 
@@ -335,13 +415,78 @@ class LoginFlow {
 
 
         // =========================================
-        // Dashboard
+        // Dashboard After Login
         // =========================================
 
         await this.waitForDashboard();
 
         console.log("");
-        console.log("Login flow completed.");
+        console.log(
+            "Login flow completed."
+        );
+    }
+
+
+    // =========================================
+    // Check Existing Session
+    // =========================================
+
+    async checkExistingSession() {
+
+        console.log("");
+        console.log(
+            "Checking existing login session..."
+        );
+
+        const maxWaitTime = 30000;
+        const pollInterval = 1000;
+
+        const startTime =
+            Date.now();
+
+
+        while (
+            Date.now() - startTime <
+            maxWaitTime
+        ) {
+
+            try {
+
+                const dashboardDisplayed =
+                    await this.dashboardPage
+                        .isDisplayed();
+
+
+                if (dashboardDisplayed) {
+
+                    console.log(
+                        "Dashboard detected."
+                    );
+
+                    return true;
+                }
+
+            } catch (error) {
+
+                // Dashboard may still be loading.
+            }
+
+
+            console.log(
+                "Dashboard not detected yet. Waiting..."
+            );
+
+            await this.driver.pause(
+                pollInterval
+            );
+        }
+
+
+        console.log(
+            "Dashboard not detected after 30 seconds."
+        );
+
+        return false;
     }
 
 
@@ -352,10 +497,13 @@ class LoginFlow {
     async waitForDashboard() {
 
         console.log("");
-        console.log("Waiting for Dashboard...");
+        console.log(
+            "Waiting for Dashboard..."
+        );
 
         const dashboardDisplayed =
-            await this.dashboardPage.isDisplayed();
+            await this.dashboardPage
+                .isDisplayed();
 
 
         if (!dashboardDisplayed) {
@@ -366,7 +514,9 @@ class LoginFlow {
         }
 
 
-        console.log("Dashboard displayed successfully.");
+        console.log(
+            "Dashboard displayed successfully."
+        );
     }
 }
 

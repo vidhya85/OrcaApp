@@ -30,10 +30,6 @@ class OtpPage {
         console.log("          OTP SCREEN INSPECTION");
         console.log("========================================");
 
-        const source =
-            await this.driver.getPageSource();
-
-        console.log(source);
 
         console.log("");
         console.log("========================================");

@@ -59,6 +59,68 @@ class OTPService {
         await client.end();
     }
 }
+
+static async getGuestOTP(customerContextId, afterTime) {
+
+    const client = new Client(db);
+
+    try {
+
+        await client.connect();
+
+        const query = `
+            SELECT
+                otp,
+                created_date_time
+            FROM users.guest_activity
+            WHERE customer_context_id = $1
+              AND created_date_time > $2
+              AND otp IS NOT NULL
+            ORDER BY created_date_time DESC
+            LIMIT 1;
+        `;
+
+        const maxWaitTime = 30000;
+        const pollInterval = 1000;
+
+        const startTime = Date.now();
+
+        while (Date.now() - startTime < maxWaitTime) {
+
+            const result = await client.query(
+                query,
+                [customerContextId, afterTime]
+            );
+
+            if (result.rows.length > 0) {
+
+                console.log(
+                    "New guest OTP found in PostgreSQL."
+                );
+
+                return result.rows[0].otp;
+            }
+
+            console.log(
+                "Guest OTP not available yet. Checking again..."
+            );
+
+            await new Promise(resolve =>
+                setTimeout(resolve, pollInterval)
+            );
+        }
+
+        throw new Error(
+            `Guest OTP was not found within ${
+                maxWaitTime / 1000
+            } seconds.`
+        );
+
+    } finally {
+
+        await client.end();
+    }
+}
 }
 
 module.exports = OTPService;

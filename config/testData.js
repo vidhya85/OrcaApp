@@ -1,6 +1,6 @@
 const testData = {
 
-    fundSearchKeyword: "icici",
+    fundSearchKeyword: "hdfc",
     investmentType: "ONE_TIME",
     investmentAmount: 1000,
 

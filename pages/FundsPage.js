@@ -101,7 +101,7 @@ class FundsPage {
     // CLICK MUTUAL FUNDS
     // =========================================================
 
-    async clickMutualFunds() {
+    /*async clickMutualFunds() {
 
         console.log("");
         console.log("Opening Mutual Funds...");
@@ -115,7 +115,36 @@ class FundsPage {
         });
 
         console.log("Scheme Collections screen displayed.");
+    }*/
+
+        async clickMutualFunds() {
+
+    console.log("");
+    console.log("Opening Mutual Funds...");
+
+    await this.mutualFunds.click();
+
+    console.log("Mutual Funds clicked.");
+
+    await this.driver.pause(3000);
+
+    try {
+
+        await this.schemeCollectionsTitle.waitForDisplayed({
+            timeout: 10000
+        });
+
+        console.log("Scheme Collections displayed.");
+
+    } catch (error) {
+
+        console.log("");
+        console.log("Scheme Collections NOT displayed.");
+        console.log("Current screen source:");
+    
+        throw error;
     }
+}
     // =========================================================
     // SELECT EQUITY FUNDS
     // =========================================================
