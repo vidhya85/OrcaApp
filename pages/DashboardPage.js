@@ -28,6 +28,36 @@ class DashboardPage {
         );
     }
 
+    // =========================================
+    // Watchlist
+    // =========================================
+
+    get watchlist() {
+
+        return this.driver.$(
+            '~Watchlist'
+        );
+    }
+
+
+    // =========================================
+    // Click Watchlist
+    // =========================================
+
+    async clickWatchlist() {
+
+        await this.watchlist.waitForDisplayed({
+            timeout: 10000,
+            interval: 1000
+        });
+
+        await this.watchlist.click();
+
+        console.log(
+            "Watchlist clicked."
+        );
+    }
+
 
     // =========================================
     // Check Dashboard

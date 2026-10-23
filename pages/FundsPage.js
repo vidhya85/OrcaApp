@@ -140,7 +140,7 @@ class FundsPage {
 
         console.log("");
         console.log("Scheme Collections NOT displayed.");
-        console.log("Current screen source:");
+    
     
         throw error;
     }

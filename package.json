@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:all": "for test in tests/*.js; do echo \"Running $test\"; node \"$test\"; done"
+    "test:all": "for test in tests/*.js; do echo \"Running $test\"; node \"$test\"; done",
+    "test:web": "playwright test --config=web/playwright.config.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,7 @@
     "webdriverio": "^9.30.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@wdio/cli": "^9.31.5"
   }
 }

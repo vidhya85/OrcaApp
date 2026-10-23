@@ -77,7 +77,7 @@ async function main() {
         const fundsPage =
             new FundsPage(driver);
 
-        const fundDetailsPage =
+        const fundDetailsPage = 
             new FundDetailsPage(driver);
 
          mfPurchasePage =
