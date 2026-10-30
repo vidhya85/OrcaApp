@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ORCA Mobile Test Execution Report</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f9;
+            color: #263238;
+        }
+
+        header {
+            background: #17365d;
+            color: white;
+            padding: 28px 5%;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        header p {
+            margin: 0;
+            color: #e2eaf4;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 16px;
+            margin: 22px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+
+        .card-label {
+            color: #596579;
+            font-size: 14px;
+        }
+
+        .value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .green {
+            color: #16834a;
+        }
+
+        .red {
+            color: #c62828;
+        }
+
+        .blue {
+            color: #245bb5;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            margin-top: 24px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px #0000000d;
+        }
+
+        .section h2 {
+            margin-top: 0;
+        }
+
+        .heading-date {
+            font-size: 14px;
+            font-weight: normal;
+            color: #596579;
+            margin-left: 8px;
+        }
+
+        .legacy-date {
+            font-size: 12px;
+            color: #697586;
+            margin-top: 6px;
+        }
+
+        .section-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 22px;
+            padding: 14px;
+            background: #f4f6f9;
+            border-radius: 8px;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e5e9ef;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f3f8;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .passed {
+            background: #e2f5e9;
+            color: #16753b;
+        }
+
+        .failed {
+            background: #fde8e7;
+            color: #b42318;
+        }
+
+        .other {
+            background: #edf0f4;
+            color: #596579;
+        }
+
+        a {
+            color: #245bb5;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            color: #697586;
+            font-size: 12px;
+            padding: 25px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 22px;
+            }
+
+            main {
+                padding: 0 12px;
+            }
+
+            .section {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>ORCA Mobile Test Execution Report</h1>
+        <p>
+            A summary of automated tests executed against the ORCA Mobile
+            application, separated by user type.
+        </p>
+    </header>
+
+    <main>
+        <h2>Overall Execution Summary</h2>
+
+        <p>
+            Total saved reports:
+            <strong>20</strong>
+        </p>
+
+        <div class="cards">
+            <div class="card">
+                <div class="card-label">Total test reports</div>
+                <div class="value">20</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Passed</div>
+                <div class="value green">16</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Failed</div>
+                <div class="value red">4</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Other</div>
+                <div class="value">0</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Pass rate</div>
+                <div class="value blue">80.0%</div>
+            </div>
+        </div>
+
+        
+        <div class="section">
+            <h2>
+                Registered User Test Results
+                <span class="heading-date">
+                    — Latest execution:
+                    27/10/2026, 3:52:15 pm
+                </span>
+            </h2>
+
+            <div class="section-summary">
+                <span>Total reports: <strong>6</strong></span>
+                <span>Passed: <strong class="green">4</strong></span>
+                <span>Failed: <strong class="red">2</strong></span>
+                <span>Other: <strong>0</strong></span>
+                <span>Pass rate: <strong class="blue">66.7%</strong></span>
+            </div>
+
+            <p>
+                Each row represents the latest saved execution for a test
+                and user type. Fund counts show the fund validations recorded,
+                where available.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test scenario</th>
+                        <th>Result</th>
+                        <th>Total funds</th>
+                        <th>Passed funds</th>
+                        <th>Failed funds</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+            <tr>
+                <td>
+                    Equity Funds Test
+                    
+                </td>
+                <td>
+                    <span class="status failed">
+                        FAILED
+                    </span>
+                </td>
+                <td>1</td>
+                <td>0</td>
+                <td>1</td>
+                <td><a href="../../mobile/equity-funds-registered-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Custom Amount Add To Cart Test
+                    
+                </td>
+                <td>
+                    <span class="status failed">
+                        FAILED
+                    </span>
+                </td>
+                <td>1</td>
+                <td>0</td>
+                <td>1</td>
+                <td><a href="../../mobile/mf-custom-amount-add-to-cart-registered-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Custom Amount Continue Purchase Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-custom-amount-continue-purchase-registered-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Default Amount Add To Cart Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-default-amount-add-to-cart-registered-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Default Amount Continue Purchase Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-default-amount-continue-purchase-registered-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    Search Fund Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>1</td>
+                <td>1</td>
+                <td>0</td>
+                <td><a href="../../mobile/search-fund-registered-report.html">View details</a></td>
+            </tr>
+                </tbody>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <h2>
+                Guest User Test Results
+                <span class="heading-date">
+                    — Latest execution:
+                    23/10/2026, 5:25:44 pm
+                </span>
+            </h2>
+
+            <div class="section-summary">
+                <span>Total reports: <strong>5</strong></span>
+                <span>Passed: <strong class="green">4</strong></span>
+                <span>Failed: <strong class="red">1</strong></span>
+                <span>Other: <strong>0</strong></span>
+                <span>Pass rate: <strong class="blue">80.0%</strong></span>
+            </div>
+
+            <p>
+                Each row represents the latest saved execution for a test
+                and user type. Fund counts show the fund validations recorded,
+                where available.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test scenario</th>
+                        <th>Result</th>
+                        <th>Total funds</th>
+                        <th>Passed funds</th>
+                        <th>Failed funds</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+            <tr>
+                <td>
+                    MF Custom Amount Add To Cart Test
+                    
+                </td>
+                <td>
+                    <span class="status failed">
+                        FAILED
+                    </span>
+                </td>
+                <td>1</td>
+                <td>0</td>
+                <td>1</td>
+                <td><a href="../../mobile/mf-custom-amount-add-to-cart-guest-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Custom Amount Continue Purchase Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-custom-amount-continue-purchase-guest-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Default Amount Add To Cart Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-default-amount-add-to-cart-guest-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Default Amount Continue Purchase Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-default-amount-continue-purchase-guest-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    Search Fund Test
+                    
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>1</td>
+                <td>1</td>
+                <td>0</td>
+                <td><a href="../../mobile/search-fund-guest-report.html">View details</a></td>
+            </tr>
+                </tbody>
+            </table>
+        </div>
+
+        
+        <div class="section">
+            <h2>
+                Unclassified / Legacy Reports
+                <span class="heading-date">
+                    — Latest execution:
+                    27/10/2026, 4:02:58 pm
+                </span>
+            </h2>
+
+            <div class="section-summary">
+                <span>Total reports: <strong>9</strong></span>
+                <span>Passed: <strong class="green">8</strong></span>
+                <span>Failed: <strong class="red">1</strong></span>
+                <span>Other: <strong>0</strong></span>
+                <span>Pass rate: <strong class="blue">88.9%</strong></span>
+            </div>
+
+            <p>
+                Each row represents the latest saved execution for a test
+                and user type. Fund counts show the fund validations recorded,
+                where available.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test scenario</th>
+                        <th>Result</th>
+                        <th>Total funds</th>
+                        <th>Passed funds</th>
+                        <th>Failed funds</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+            <tr>
+                <td>
+                    Equity Funds Test
+                    <div class="legacy-date">
+                   Executed: 23/10/2026, 12:54:50 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>24</td>
+                <td>24</td>
+                <td>0</td>
+                <td><a href="../../mobile/equity-funds-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Custom Amount Continue Purchase Test
+                    <div class="legacy-date">
+                   Executed: 23/10/2026, 2:40:56 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-custom-amount-continue-purchase-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Custom Amount Test
+                    <div class="legacy-date">
+                   Executed: 9/9/2026, 12:23:41 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-custom-amount-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Default Amount Add To Cart Test
+                    <div class="legacy-date">
+                   Executed: 23/10/2026, 2:41:25 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-default-amount-add-to-cart-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Default Amount Continue Purchase Test
+                    <div class="legacy-date">
+                   Executed: 23/10/2026, 2:42:22 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-default-amount-continue-purchase-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Holdings Test
+                    <div class="legacy-date">
+                   Executed: 27/10/2026, 4:02:58 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status failed">
+                        FAILED
+                    </span>
+                </td>
+                <td>1</td>
+                <td>0</td>
+                <td>1</td>
+                <td><a href="../../mobile/mf-holdings-guest-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    MF Purchase Test
+                    <div class="legacy-date">
+                   Executed: 9/9/2026, 12:08:37 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/mf-purchase-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    Search Fund Test
+                    <div class="legacy-date">
+                   Executed: 23/10/2026, 2:43:38 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>1</td>
+                <td>1</td>
+                <td>0</td>
+                <td><a href="../../mobile/search-fund-report.html">View details</a></td>
+            </tr>
+            <tr>
+                <td>
+                    Watchlist Test
+                    <div class="legacy-date">
+                   Executed: 27/10/2026, 2:58:26 pm
+               </div>
+                </td>
+                <td>
+                    <span class="status passed">
+                        PASSED
+                    </span>
+                </td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td><a href="../../mobile/watchlist-registered-report.html">View details</a></td>
+            </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            Generated: 10/27/2026, 4:02:58 PM |
+            ORCA Mobile Automation
+        </footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>MF Holdings Test</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 30px;
+            background: #f5f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(180px, 1fr)
+            );
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .card .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .passed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .not-started {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .report-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .report-info p {
+            margin: 8px 0;
+        }
+
+        .screenshot-navigation {
+            margin: 0 0 25px;
+        }
+
+        .screenshot-navigation a,
+        .screenshot-card a {
+            color: #245bb5;
+            text-decoration: none;
+        }
+
+        .screenshot-navigation a {
+            display: inline-block;
+            background: #eaf1ff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .screenshot-navigation a:hover,
+        .screenshot-card a:hover {
+            text-decoration: underline;
+        }
+
+        .screenshots-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
+            gap: 18px;
+        }
+
+        .screenshot-card {
+            border: 1px solid #e5e9ef;
+            border-radius: 8px;
+            padding: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .screenshot-card p {
+            font-size: 13px;
+            color: #596579;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f0f1f3;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .error {
+            max-width: 400px;
+            word-break: break-word;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>MF Holdings Test</h1>
+
+    <div class="subtitle">
+        ORCA Mobile Automation Test Report —
+        GUEST
+    </div>
+
+    
+            <p class="screenshot-navigation">
+                <a href="#screenshots">
+                    View Screenshots (5)
+                </a>
+            </p>
+        
+
+    <div class="summary">
+        <div class="card">
+            <h3>Overall Status</h3>
+            <div>
+                <span class="status failed">
+                    FAILED
+                </span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Total Funds</h3>
+            <div class="value">1</div>
+        </div>
+
+        <div class="card">
+            <h3>Passed</h3>
+            <div class="value">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Failed</h3>
+            <div class="value">1</div>
+        </div>
+    </div>
+
+    <div class="report-info">
+        <p>
+            <strong>User Type:</strong>
+            GUEST
+        </p>
+
+        <p>
+            <strong>Start Time:</strong>
+            27/10/2026, 4:00:48 pm
+        </p>
+
+        <p>
+            <strong>End Time:</strong>
+            27/10/2026, 4:02:58 pm
+        </p>
+    </div>
+
+    
+            <div class="screenshots-section" id="screenshots">
+                <h2>Test Screenshots (5)</h2>
+
+                <div class="screenshots-grid">
+                               
+                <div class="screenshot-card">
+                    <a href="../../Screenshots/Mobile/Mutual_Fund_Holdings_Holdings_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img
+                            src="../../Screenshots/Mobile/Mutual_Fund_Holdings_Holdings_Failure.png"
+                            alt="Mutual_Fund_Holdings_Holdings_Failure.png"
+                            loading="lazy"
+                        >
+                    </a>
+
+                    <p>Mutual_Fund_Holdings_Holdings_Failure.png</p>
+
+                    <a href="../../Screenshots/Mobile/Mutual_Fund_Holdings_Holdings_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View full screenshot
+                    </a>
+                </div>
+            
+                <div class="screenshot-card">
+                    <a href="../../Screenshots/Mobile/Mutual_Fund_Holdings_Login_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img
+                            src="../../Screenshots/Mobile/Mutual_Fund_Holdings_Login_Failure.png"
+                            alt="Mutual_Fund_Holdings_Login_Failure.png"
+                            loading="lazy"
+                        >
+                    </a>
+
+                    <p>Mutual_Fund_Holdings_Login_Failure.png</p>
+
+                    <a href="../../Screenshots/Mobile/Mutual_Fund_Holdings_Login_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View full screenshot
+                    </a>
+                </div>
+            
+                <div class="screenshot-card">
+                    <a href="../../Screenshots/Mobile/Mutual_Fund_Holdings_Mutual_Funds_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img
+                            src="../../Screenshots/Mobile/Mutual_Fund_Holdings_Mutual_Funds_Failure.png"
+                            alt="Mutual_Fund_Holdings_Mutual_Funds_Failure.png"
+                            loading="lazy"
+                        >
+                    </a>
+
+                    <p>Mutual_Fund_Holdings_Mutual_Funds_Failure.png</p>
+
+                    <a href="../../Screenshots/Mobile/Mutual_Fund_Holdings_Mutual_Funds_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View full screenshot
+                    </a>
+                </div>
+            
+                <div class="screenshot-card">
+                    <a href="../../Screenshots/Mobile/Unknown_Login_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img
+                            src="../../Screenshots/Mobile/Unknown_Login_Failure.png"
+                            alt="Unknown_Login_Failure.png"
+                            loading="lazy"
+                        >
+                    </a>
+
+                    <p>Unknown_Login_Failure.png</p>
+
+                    <a href="../../Screenshots/Mobile/Unknown_Login_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View full screenshot
+                    </a>
+                </div>
+            
+                <div class="screenshot-card">
+                    <a href="../../Screenshots/Mobile/Watchlist_Login_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        <img
+                            src="../../Screenshots/Mobile/Watchlist_Login_Failure.png"
+                            alt="Watchlist_Login_Failure.png"
+                            loading="lazy"
+                        >
+                    </a>
+
+                    <p>Watchlist_Login_Failure.png</p>
+
+                    <a href="../../Screenshots/Mobile/Watchlist_Login_Failure.png"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View full screenshot
+                    </a>
+                </div>
+            
+                           </div>
+            </div>
+        
+
+    <h2>Fund Test Results</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Fund Name</th>
+                <th>Status</th>
+                <th>Failed Section</th>
+                <th>Error</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            
+                <tr>
+                    <td>1</td>
+                    <td>Mutual Fund Holdings</td>
+                    <td>
+                        <span class="status failed">
+                            FAILED
+                        </span>
+                    </td>
+                    <td>
+                        Login
+                    </td>
+                    <td class="error">
+                        Dashboard was not displayed after Explore Funds.
+                    </td>
+                </tr>
+            
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

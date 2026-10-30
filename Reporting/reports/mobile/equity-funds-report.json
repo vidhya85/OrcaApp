@@ -1,0 +1,107 @@
+{
+    "testName": "Equity Funds Test",
+    "status": "PASSED",
+    "startTime": "2026-10-23T07:15:35.999Z",
+    "endTime": "2026-10-23T07:24:50.662Z",
+    "totalFunds": 24,
+    "passedFunds": 24,
+    "failedFunds": 0,
+    "funds": [
+        {
+            "fundName": "Nippon India Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "DSP Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "HSBC Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "HDFC Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Bandhan Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "TRUSTMF Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "WhiteOak Capital Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "JM Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Quant Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Aditya Birla Sun Life Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "360 ONE Flexicap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Motilal Oswal Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Mirae Asset Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Kotak Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Baroda BNP Paribas Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "ICICI Prudential Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "The Wealth Company Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Capitalmind Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Navi Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Invesco India Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Tata Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Edelweiss Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "PGIM India Flexi Cap Fund",
+            "status": "PASSED"
+        },
+        {
+            "fundName": "Axis Flexi Cap Fund",
+            "status": "PASSED"
+        }
+    ]
+}

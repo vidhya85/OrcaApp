@@ -1,0 +1,10 @@
+{
+    "testName": "MF Purchase Test",
+    "status": "PASSED",
+    "startTime": "2026-09-09T06:36:40.126Z",
+    "endTime": "2026-09-09T06:38:37.040Z",
+    "totalFunds": 0,
+    "passedFunds": 0,
+    "failedFunds": 0,
+    "funds": []
+}

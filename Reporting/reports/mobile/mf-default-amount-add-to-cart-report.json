@@ -1,0 +1,10 @@
+{
+    "testName": "MF Default Amount Add To Cart Test",
+    "status": "PASSED",
+    "startTime": "2026-10-23T09:10:59.592Z",
+    "endTime": "2026-10-23T09:11:25.008Z",
+    "totalFunds": 0,
+    "passedFunds": 0,
+    "failedFunds": 0,
+    "funds": []
+}

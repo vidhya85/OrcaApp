@@ -1,11 +1,12 @@
 # Dependencies
 node_modules/
 
-# Test reports
-reports/
+# Root-level generated reports and screenshots
+/reports/
+/screenshots/
 
-# Screenshots
-screenshots/
+# Test artifacts
+/test-results/
 
 # Logs
 logs/
@@ -26,8 +27,11 @@ logs/
 tmp/
 temp/
 
-# Appium / automation generated files
+# Appium generated files
 run/
 
 # Application builds
-apps/
+/apps/
+
+# Mobile application builds
+Mobile/apps/*.zip

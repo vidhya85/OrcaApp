@@ -1,0 +1,10 @@
+{
+    "testName": "MF Default Amount Continue Purchase Test",
+    "status": "PASSED",
+    "startTime": "2026-10-23T09:11:30.204Z",
+    "endTime": "2026-10-23T09:12:22.275Z",
+    "totalFunds": 0,
+    "passedFunds": 0,
+    "failedFunds": 0,
+    "funds": []
+}
