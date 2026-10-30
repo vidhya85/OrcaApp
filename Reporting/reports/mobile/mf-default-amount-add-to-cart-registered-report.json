@@ -1,0 +1,13 @@
+{
+    "testName": "MF Default Amount Add To Cart Test",
+    "userType": "REGISTERED",
+    "reportGroup": "REGISTERED",
+    "environment": "PROD",
+    "status": "PASSED",
+    "startTime": "2026-10-27T08:53:03.727Z",
+    "endTime": "2026-10-27T08:53:43.098Z",
+    "totalFunds": 0,
+    "passedFunds": 0,
+    "failedFunds": 0,
+    "funds": []
+}

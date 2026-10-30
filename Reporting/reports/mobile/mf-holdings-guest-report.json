@@ -1,0 +1,20 @@
+{
+    "testName": "MF Holdings Test",
+    "userType": "GUEST",
+    "reportGroup": "UNCLASSIFIED",
+    "environment": "PROD",
+    "status": "FAILED",
+    "startTime": "2026-10-27T10:30:48.215Z",
+    "endTime": "2026-10-27T10:32:58.378Z",
+    "totalFunds": 1,
+    "passedFunds": 0,
+    "failedFunds": 1,
+    "funds": [
+        {
+            "fundName": "Mutual Fund Holdings",
+            "status": "FAILED",
+            "failedSection": "Login",
+            "error": "Dashboard was not displayed after Explore Funds."
+        }
+    ]
+}

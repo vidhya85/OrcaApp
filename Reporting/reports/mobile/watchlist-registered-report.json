@@ -1,0 +1,13 @@
+{
+    "testName": "Watchlist Test",
+    "userType": "REGISTERED",
+    "reportGroup": "UNCLASSIFIED",
+    "environment": "PROD",
+    "status": "PASSED",
+    "startTime": "2026-10-27T09:26:10.398Z",
+    "endTime": "2026-10-27T09:28:26.795Z",
+    "totalFunds": 0,
+    "passedFunds": 0,
+    "failedFunds": 0,
+    "funds": []
+}

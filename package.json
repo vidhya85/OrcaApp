@@ -1,12 +1,19 @@
+
 {
   "name": "orca-framework",
   "version": "1.0.0",
-  "description": "",
+  "description": "ORCA Mobile Automation Framework using Appium and WebdriverIO",
   "main": "index.js",
   "scripts": {
-    "test:all": "for test in tests/*.js; do echo \"Running $test\"; node \"$test\"; done"
+    "test:guest": "node Mobile/tests/runGuestTests.js",
+    "test:registered": "node Mobile/tests/runRegisteredTests.js"
   },
-  "keywords": [],
+  "keywords": [
+    "orca",
+    "mobile-automation",
+    "appium",
+    "webdriverio"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",

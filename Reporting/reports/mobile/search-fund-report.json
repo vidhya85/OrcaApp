@@ -1,0 +1,15 @@
+{
+    "testName": "Search Fund Test",
+    "status": "PASSED",
+    "startTime": "2026-10-23T09:13:14.325Z",
+    "endTime": "2026-10-23T09:13:38.305Z",
+    "totalFunds": 1,
+    "passedFunds": 1,
+    "failedFunds": 0,
+    "funds": [
+        {
+            "fundName": "HDFC Flexi Cap Fund\nType -\nEquity\nAUM -\n1,08,546.98 crs.",
+            "status": "PASSED"
+        }
+    ]
+}

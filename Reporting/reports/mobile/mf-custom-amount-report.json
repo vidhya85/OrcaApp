@@ -1,0 +1,10 @@
+{
+    "testName": "MF Custom Amount Test",
+    "status": "PASSED",
+    "startTime": "2026-09-09T06:53:26.585Z",
+    "endTime": "2026-09-09T06:53:41.523Z",
+    "totalFunds": 0,
+    "passedFunds": 0,
+    "failedFunds": 0,
+    "funds": []
+}

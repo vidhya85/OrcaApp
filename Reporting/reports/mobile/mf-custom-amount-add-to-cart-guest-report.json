@@ -1,0 +1,18 @@
+{
+    "testName": "MF Custom Amount Add To Cart Test",
+    "userType": "GUEST",
+    "status": "FAILED",
+    "startTime": "2026-10-23T11:48:12.217Z",
+    "endTime": "2026-10-23T11:50:16.354Z",
+    "totalFunds": 1,
+    "passedFunds": 0,
+    "failedFunds": 1,
+    "funds": [
+        {
+            "fundName": "Unknown",
+            "status": "FAILED",
+            "failedSection": "Login",
+            "error": "Dashboard was not displayed after Explore Funds."
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+{
+    "testName": "MF Default Amount Continue Purchase Test",
+    "userType": "REGISTERED",
+    "reportGroup": "REGISTERED",
+    "environment": "PROD",
+    "status": "PASSED",
+    "startTime": "2026-10-27T08:53:48.706Z",
+    "endTime": "2026-10-27T08:54:56.689Z",
+    "totalFunds": 0,
+    "passedFunds": 0,
+    "failedFunds": 0,
+    "funds": []
+}
